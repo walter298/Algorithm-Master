@@ -34,10 +34,14 @@ public class SelectionSort {
             }
         }
         
-        var sequentialSwapAnimation = new SequentialTransition();
+        System.out.println("Creating swap Animations");
+        var swapAnimations = new AnimationList();
+        
         for (var elem : swappedIndices) {
-            sequentialSwapAnimation.getChildren().add(ui.swap(elem.i, elem.j));
+            swapAnimations.animations.add(ui.swap(elem.i, elem.j));
         }
-        sequentialSwapAnimation.play();
+        System.out.println("Running Swap Animations");
+
+        swapAnimations.run();
     }
 }

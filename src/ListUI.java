@@ -84,25 +84,32 @@ public class ListUI {
         //referencing the two texts that will be swapped 
         var firstText = currInput.get(firstIdx).text;
         var secondText = currInput.get(secondIdx).text;
+
         //save their x-values
         var firstTextX = firstText.getX();
         var secondTextX = secondText.getX();
+
         //animation that moves them up and over to their new correct positions
         var firstTextTranslation  = moveUpAndOverToIndex(firstText, secondIdx);
         var secondTextTranslation = moveUpAndOverToIndex(secondText, firstIdx);
+
         //combine both animations to happen at once
         var parallelAnimation = new ParallelTransition(firstTextTranslation, secondTextTranslation);
+
         //once the animation finishes, we reset the translate x values so nothing weird later happens later
         parallelAnimation.setOnFinished(event -> {
+            System.out.println("On Finished...");
             firstText.setTranslateX(0);
             firstText.setX(secondTextX);
 
             secondText.setTranslateX(0);
             secondText.setX(firstTextX);
+
             //making sure that the list saved in code is the same as the list order on the screen
             Collections.swap(currInput, firstIdx, secondIdx);
         });
-        
+        parallelAnimation.setCycleCount(1); // Ensure it runs only once
+
         return parallelAnimation;
     }
 
