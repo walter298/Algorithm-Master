@@ -20,7 +20,7 @@ public class SelectionSort {
     public static void sort(Group group, ArrayList<Integer> integers) {
         var ui = new ListUI(group, integers, 270, 270);
 
-        var swappedIndices = new ArrayList<SwapIndices>();
+        var swapAnimations = new OnDemandAnimationList();
         for (int i = 0; i < integers.size(); i++) {
             int min = i; 
             for (int j = i + 1; j < integers.size(); j++) {
@@ -30,21 +30,11 @@ public class SelectionSort {
             }
             if (min != i) {
                 Collections.swap(integers, i, min);
-                System.out.println("About to swap " + i + " and " + min);
-                swappedIndices.add(new SwapIndices(i, min));
+                final int iCopy = i, minCopy = min;
+                swapAnimations.schedule(() -> { return ui.swap(iCopy, minCopy); });
             }
         }
         
-        System.out.println("Creating swap Animations");
-        var swapAnimations = new AnimationList();
-        
-        for (var elem : swappedIndices) {
-            swapAnimations.unstartedAnimations.add(() -> { return ui.swap(elem.i, elem.j); });
-        }
-
-        //System.out.println(swappedIndices.size() + " " + swapAnimations.animations.size());
-        //System.out.println("Running Swap Animations");
-
         swapAnimations.run();
     }
 }
