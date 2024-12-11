@@ -9,7 +9,7 @@ import javafx.scene.*;
 import javafx.scene.control.Button;
 import javafx.scene.paint.Color;
 
-// This is my newnew addition.
+// This is my new, new,new addition.
 public class Main extends Application {
     private Button makeSelectionSortButton(Group group) {
         var selectionSortButton = new Button("Selection Sort");
