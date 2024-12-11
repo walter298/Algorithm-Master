@@ -21,15 +21,15 @@ public class Main extends Application {
         return selectionSortButton;
     }
 
-    private Button makePartitionButton(Group group) {
-        var partitionButton = new Button("Quicksort");
-        partitionButton.setLayoutX(100);
-        partitionButton.setLayoutY(200);
-        partitionButton.setOnMouseClicked(event -> {
+    private Button makeQuicksortButton(Group group) {
+        var quicksortButton = new Button("Quicksort");
+        quicksortButton.setLayoutX(100);
+        quicksortButton.setLayoutY(200);
+        quicksortButton.setOnMouseClicked(event -> {
             QuickSort.sort(group, new ArrayList<Integer>(Arrays.asList(12, 11, 13, 17, 29, 18, 95, 81, 22, 35)));
-            partitionButton.setDisable(true);
+            quicksortButton.setDisable(true);
         });
-        return partitionButton;
+        return quicksortButton;
     }
 
     @Override 
@@ -39,7 +39,7 @@ public class Main extends Application {
         var scene = new Scene(group, Color.AZURE);
         stage.setScene(scene);
 
-        group.getChildren().addAll(makeSelectionSortButton(group), makePartitionButton(group));
+        group.getChildren().addAll(makeSelectionSortButton(group), makeQuicksortButton(group));
 
         stage.setFullScreen(true);
         stage.setTitle("Algorithm Visualizer");

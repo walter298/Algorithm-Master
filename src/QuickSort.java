@@ -14,7 +14,7 @@ public class QuickSort {
         final var pivot = integers.get(pivotIdx);
         System.out.println(pivot);
         var mid1 = Partition.partition(animations, visualList, integers, (i) -> { return i < pivot; }, first, last);
-        var mid2 = Partition.partition(animations, visualList, integers, (i) -> { return i > pivot; }, mid1, last);
+        var mid2 = Partition.partition(animations, visualList, integers, (i) -> { return i == pivot; }, mid1, last);
         sortImpl(animations, visualList, integers, first, mid1);
         sortImpl(animations, visualList, integers, mid2, last);
     }
