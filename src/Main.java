@@ -22,11 +22,11 @@ public class Main extends Application {
     }
 
     private Button makePartitionButton(Group group) {
-        var partitionButton = new Button("Partition");
+        var partitionButton = new Button("Quicksort");
         partitionButton.setLayoutX(100);
         partitionButton.setLayoutY(200);
         partitionButton.setOnMouseClicked(event -> {
-            Partition.partition(group, new ArrayList<Integer>(Arrays.asList(12, 14, 17, 20, 94, 61, 43)), (i) -> { return i % 2 != 0; });
+            QuickSort.sort(group, new ArrayList<Integer>(Arrays.asList(12, 11, 13, 17, 29, 18, 95, 81, 22, 35)));
             partitionButton.setDisable(true);
         });
         return partitionButton;
