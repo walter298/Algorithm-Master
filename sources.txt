@@ -2,3 +2,4 @@ src/Main.java
 src/ListUI.java
 src/OnDemandAnimationList.java
 src/SelectionSort.java
+src/Partition.java

@@ -50,7 +50,11 @@ public class ListUI {
         if (!inBounds(idx)) {
             throw new IndexOutOfBoundsException();
         }
-        return currInput.size() == 1 ? inputX : inputX + ((textWidth + NUMBER_GAP) * (double)idx);
+        var x = inputX;
+        for (int i = 0; i < currInput.size(); i++) {
+            x += currInput.get(i).text.getBoundsInLocal().getWidth() + NUMBER_GAP;
+        }
+        return x;
     }  
 
     public void append(Integer num, Group group) {
