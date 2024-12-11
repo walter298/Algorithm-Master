@@ -26,7 +26,7 @@ public class Main extends Application {
         partitionButton.setLayoutX(100);
         partitionButton.setLayoutY(200);
         partitionButton.setOnMouseClicked(event -> {
-            Partition.partition(group, new ArrayList<Integer>(Arrays.asList(1, 4, 3, 2, 6, 8, 3, 9)), (i) -> { return i % 3 == 0; });
+            Partition.partition(group, new ArrayList<Integer>(Arrays.asList(12, 14, 17, 20, 94, 61, 43)), (i) -> { return i % 2 != 0; });
             partitionButton.setDisable(true);
         });
         return partitionButton;

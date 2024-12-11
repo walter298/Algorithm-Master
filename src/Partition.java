@@ -16,24 +16,40 @@ public class Partition {
         return integers.size();
     }
 
-    public static void partition(Group group, ArrayList<Integer> integers, Function<Integer, Boolean> pred) {
+    public static void partition(OnDemandAnimationList animations, ListUI visualList, ArrayList<Integer> integers, Function<Integer, Boolean> pred) {
         var start = findFirstNotMatch(integers, pred);
         if (start == integers.size()) {
             return;
         }
 
-        var ui = new ListUI(group, integers, 270, 470);
-
-        var animations = new OnDemandAnimationList();
-
         for (int i = start + 1; i < integers.size(); i++) {
             if (pred.apply(integers.get(i))) {
                 Collections.swap(integers, i, start);
                 final int iCopy = i, startCopy = start;
-                animations.schedule(() -> { return ui.swap(iCopy, startCopy); });
+                animations.schedule(() -> { return visualList.swap(iCopy, startCopy); });
                 start++;
             }
         }
+    }
+
+    public static void partition(Group group, ArrayList<Integer> integers, Function<Integer, Boolean> pred) {
+        //var start = findFirstNotMatch(integers, pred);
+        // if (start == integers.size()) {
+        //     return;
+        // }
+
+        var animations = new OnDemandAnimationList();
+        var visualList = new ListUI(group, integers, 270, 470);
+
+        partition(animations, visualList, integers, pred);
+        // for (int i = start + 1; i < integers.size(); i++) {
+        //     if (pred.apply(integers.get(i))) {
+        //         Collections.swap(integers, i, start);
+        //         final int iCopy = i, startCopy = start;
+        //         animations.schedule(() -> { return ui.swap(iCopy, startCopy); });
+        //         start++;
+        //     }
+        // }
 
         animations.run();
     }

@@ -13,7 +13,7 @@ import javafx.scene.text.Text;
 
 public class ListUI {
     private static double FONT_SIZE = 80;
-    private static double NUMBER_GAP = 16;
+    private static double NUMBER_GAP = 28;
     
     private final double inputX;
     private final double inputY;
