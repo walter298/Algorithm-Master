@@ -30,6 +30,7 @@ public class SelectionSort {
             }
             if (min != i) {
                 Collections.swap(integers, i, min);
+                System.out.println("About to swap " + i + " and " + min);
                 swappedIndices.add(new SwapIndices(i, min));
             }
         }
@@ -38,9 +39,11 @@ public class SelectionSort {
         var swapAnimations = new AnimationList();
         
         for (var elem : swappedIndices) {
-            swapAnimations.animations.add(ui.swap(elem.i, elem.j));
+            swapAnimations.unstartedAnimations.add(() -> { return ui.swap(elem.i, elem.j); });
         }
-        System.out.println("Running Swap Animations");
+
+        //System.out.println(swappedIndices.size() + " " + swapAnimations.animations.size());
+        //System.out.println("Running Swap Animations");
 
         swapAnimations.run();
     }

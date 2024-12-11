@@ -1,6 +1,9 @@
 package src;
 
 import java.util.ArrayList;
+import java.util.Queue;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import javafx.animation.Animation;
 import javafx.animation.Animation.Status;
@@ -11,17 +14,22 @@ import javafx.event.EventHandler;
 import javafx.util.Duration;
 
 public class AnimationList {
-    public ArrayList<Animation> animations;
+    public interface LazyAnimation {
+        Animation makeAnimation();
+    }
+
+    public ArrayList<Supplier<Animation>> unstartedAnimations;
+    public ArrayList<Animation> startedAnimations;
+    
     private boolean startedNextAnimation = false;
     private int animationIdx = 0;
 
     public AnimationList() {
-        animations = new ArrayList<Animation>();
+        unstartedAnimations = new ArrayList<Supplier<Animation>>();
+        startedAnimations   = new ArrayList<Animation>();
     }
 
     void run() {
-        animations.get(0).play();
-        
         System.out.println("Creating background task");
         Timeline timeline = new Timeline(
             new KeyFrame(Duration.millis(50), 
@@ -29,18 +37,31 @@ public class AnimationList {
 
             @Override
             public void handle(ActionEvent event) {
-                if (animationIdx >= animations.size()) {
+                if (startedAnimations.isEmpty() && unstartedAnimations.isEmpty()) {
                     return;
-                } 
-                if (animations.get(animationIdx).getStatus() == Status.STOPPED) {
-                    if (!startedNextAnimation) {
-                        animations.get(animationIdx).play();
-                        startedNextAnimation = true;
-                    } else {
-                        animationIdx++;
-                        startedNextAnimation = false;
+                }
+
+                if (startedAnimations.isEmpty() || startedAnimations.get(0).getStatus() == Status.STOPPED) {
+                    startedAnimations.clear();
+                    startedAnimations.add(unstartedAnimations.get(0).get());
+                    startedAnimations.get(0).play();
+                    if (!unstartedAnimations.isEmpty()) {
+                        unstartedAnimations.remove(0);
                     }
                 }
+
+                // if (animationIdx >= animations.size()) {
+                //     return;
+                // } 
+                // if (animations.get(animationIdx).get().getStatus() == Status.STOPPED) {
+                //     if (!startedNextAnimation) {
+                //         animations.get(animationIdx).get().play();
+                //         startedNextAnimation = true;
+                //     } else {
+                //         animationIdx++;
+                //         startedNextAnimation = false;
+                //     }
+                // }
             }
         }));
         timeline.setCycleCount(Timeline.INDEFINITE);

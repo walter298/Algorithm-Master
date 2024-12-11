@@ -19,9 +19,10 @@ public class Main extends Application {
         var scene = new Scene(group, Color.AZURE);
         stage.setScene(scene);
 
-        var button = new Button("Raise");
+        var button = new Button("Selection Sort");
         button.setOnMouseClicked(event -> {
-            SelectionSort.sort(group, new ArrayList<Integer>(Arrays.asList(5, 2, 5, 1, 6, 2, 0, -4, 2)));
+            SelectionSort.sort(group, new ArrayList<Integer>(Arrays.asList(5, 2, 0, 1, 2, 9, 6, 3)));
+            button.setDisable(true);
         });
 
         group.getChildren().add(button);
