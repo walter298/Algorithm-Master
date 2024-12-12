@@ -1,59 +1,41 @@
-import javafx.application.Application;
-import javafx.scene.Group;
+package src;
+
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.layout.HBox;
+import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.geometry.Pos;
+import javafx.scene.text.Font;
 
-public class Main extends Application {
-    @Override
-    public void start(Stage stage) {
-        // Create the main page
-        Text title = new Text("Algorithms!");
-        title.setFont(Font.font(36));
+public class HomePage {
+    public static Scene createScene(Stage stage) {
+        // Title Label
+        Label title = new Label("Algorithms!");
+        title.setFont(new Font("Arial", 36));
 
-        Text instruction = new Text("Please choose the algorithm you want to display");
-        instruction.setFont(Font.font(24));
+        // Instruction Label
+        Label instruction = new Label("Please choose the algorithm you want to display:");
+        instruction.setFont(new Font("Arial", 18));
 
-        VBox vBox = new VBox(title, instruction);
-        vBox.setSpacing(20);
-
+        // Buttons for algorithms
         Button selectionSortButton = new Button("Selection Sort");
-        selectionSortButton.setOnAction(event -> showSelectionSortVisualization(stage));
+        selectionSortButton.setPrefWidth(200);
+        selectionSortButton.setOnAction(event -> 
+            stage.setScene(AlgorithmPage.createScene(stage, "Selection Sort"))
+        );
 
         Button partitionButton = new Button("Partition");
-        partitionButton.setOnAction(event -> showPartitionVisualization(stage));
+        partitionButton.setPrefWidth(200);
+        partitionButton.setOnAction(event -> 
+            stage.setScene(AlgorithmPage.createScene(stage, "Partition"))
+        );
 
-        HBox hBox = new HBox(selectionSortButton, partitionButton);
-        hBox.setSpacing(20);
+        // Layout for homepage
+        VBox layout = new VBox(20, title, instruction, selectionSortButton, partitionButton);
+        layout.setAlignment(Pos.CENTER);
+        layout.setStyle("-fx-background-color: azure;");
 
-        Group group = new Group(vBox, hBox);
-        Scene scene = new Scene(group, 800, 600);
-        stage.setScene(scene);
-        stage.setTitle("Algorithms!");
-        stage.show();
-    }
-
-    private void showSelectionSortVisualization(Stage stage) {
-        // Create the selection sort visualization scene
-        // You can use the code from your SelectionSort.java file here
-        Group selectionSortGroup = new Group();
-        Scene selectionSortScene = new Scene(selectionSortGroup, 800, 600);
-        stage.setScene(selectionSortScene);
-    }
-
-    private void showPartitionVisualization(Stage stage) {
-        // Create the partition visualization scene
-        // You can use the code from your Partition.java file here
-        Group partitionGroup = new Group();
-        Scene partitionScene = new Scene(partitionGroup, 800, 600);
-        stage.setScene(partitionScene);
-    }
-
-    public static void main(String[] args) {
-        launch();
+        return new Scene(layout, 800, 600);
     }
 }
