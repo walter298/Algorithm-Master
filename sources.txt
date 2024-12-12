@@ -4,6 +4,7 @@ src/OnDemandAnimationList.java
 src/SelectionSort.java
 src/Partition.java
 src/NthElement.java
+src/QuickSort.java
 src/BubbleSort.java
 src/InsertionSort.java
 src/HeapSort.java
