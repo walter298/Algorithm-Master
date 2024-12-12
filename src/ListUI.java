@@ -124,11 +124,10 @@ public class ListUI {
 
             //making sure that the list saved in code is the same as the list order on the screen
             Collections.swap(currInput, firstIdx, secondIdx);
-            
-            for (var v : currInput) {
-                System.out.print(v.value + " ");
-            }
-            System.out.println();
+            // for (var i : currInput) {
+            //     System.out.print(i.value + " ");
+            //     System.out.println();
+            // }
         });
         parallelAnimation.setCycleCount(1); // Ensure it runs only once
 
