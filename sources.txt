@@ -7,3 +7,4 @@ src/NthElement.java
 src/BubbleSort.java
 src/InsertionSort.java
 src/HeapSort.java
+src/BinarySearch.java
