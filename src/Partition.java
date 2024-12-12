@@ -27,7 +27,7 @@ public class Partition {
                 Collections.swap(integers, i, start);
                 final int iCopy = i, startCopy = start;
                 animations.schedule(() -> { return visualList.swap(iCopy, startCopy); });
-                start++;
+                start++; 
             }
         }
     }
