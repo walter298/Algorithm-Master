@@ -39,7 +39,7 @@ public class Partition {
         // }
 
         var animations = new OnDemandAnimationList();
-        var visualList = new ListUI(group, integers, 270, 470);
+        var visualList = new ListUI(group, integers, 270, 250);
 
         partition(animations, visualList, integers, pred);
         // for (int i = start + 1; i < integers.size(); i++) {
