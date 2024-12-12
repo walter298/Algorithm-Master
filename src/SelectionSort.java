@@ -18,7 +18,7 @@ public class SelectionSort {
     }
 
     public static void sort(Group group, ArrayList<Integer> integers) {
-        var ui = new ListUI(group, integers, 270, 270);
+        var ui = new ListUI(group, integers, 270, 100);
 
         var swapAnimations = new OnDemandAnimationList();
         for (int i = 0; i < integers.size(); i++) {

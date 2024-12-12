@@ -33,6 +33,28 @@ public class Main extends Application {
         return quicksortButton;
     }
 
+    private Button makeBubbleSortButton(Group group) {
+        var bubblesButton = new Button("Bubble Sort");
+        bubblesButton.setLayoutX(100);
+        bubblesButton.setLayoutY(300);
+        bubblesButton.setOnMouseClicked(event -> {
+            BubbleSort.bubbles(group, new ArrayList<Integer>(Arrays.asList(7, 4, 2, 8, 0, 1, 3)));
+            bubblesButton.setDisable(true);
+        });
+        return bubblesButton;
+    }
+
+    private Button makeInsertionSortButton(Group group) {
+        var InsertionButton = new Button("Insertion Sort");
+        InsertionButton.setLayoutX(100);
+        InsertionButton.setLayoutY(400);
+        InsertionButton.setOnMouseClicked(event -> {
+            InsertionSort.insert(group, new ArrayList<Integer>(Arrays.asList(5, 2, 9, 1, 0, 7, 6)));
+            InsertionButton.setDisable(true);
+        });
+        return InsertionButton;
+    }
+
     @Override 
     public void start(Stage stage) {
         var group = new Group();
@@ -40,7 +62,7 @@ public class Main extends Application {
         var scene = new Scene(group, Color.AZURE);
         stage.setScene(scene);
 
-        group.getChildren().addAll(makeSelectionSortButton(group), makeQuicksortButton(group));
+        group.getChildren().addAll(makeSelectionSortButton(group), makePartitionButton(group), makeBubbleSortButton(group), makeInsertionSortButton(group));
 
         stage.setFullScreen(true);
         stage.setTitle("Algorithm Visualizer");
