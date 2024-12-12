@@ -61,7 +61,7 @@ public class HeapSort {
             //HOW DO I TRANSFER THAT INFORMATION SUCCESSFULLY INTO HEAPIFY?
             Collections.swap(numbers, i, largest);
             final int rootValue = i, largerValue = largest;
-            animations.schedule(() -> { return newList.swap(rootValue, largerValue); });
+            //animations.schedule(() -> { return newList.swap(rootValue, largerValue); });
 
             // Recursively heapify the affected sub-tree
             heapify(numbers, n, largest);

@@ -1,0 +1,8 @@
+{
+    "name": "Partition",
+    "description": "Reorders the elements in the range [first, last) in such a way that all elements for which the predicate p returns true precede\nall elements for which predicate p returns false.",
+    "steps": [
+        "Let K be the first index whose element does not match a given predicate. If K does not exist, then the entire input is \nalready partitioned and we can short-circuit.",
+        "For each index I > K: if input[I] matches predicate: swap input[K] and input[I], and increment K"
+    ]
+}

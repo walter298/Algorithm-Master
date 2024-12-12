@@ -62,7 +62,7 @@ public class Main extends Application {
         var scene = new Scene(group, Color.AZURE);
         stage.setScene(scene);
 
-        group.getChildren().addAll(makeSelectionSortButton(group), makePartitionButton(group), makeBubbleSortButton(group), makeInsertionSortButton(group));
+        group.getChildren().addAll(makeSelectionSortButton(group), makeQuicksortButton(group), makeBubbleSortButton(group), makeInsertionSortButton(group));
 
         stage.setFullScreen(true);
         stage.setTitle("Algorithm Visualizer");

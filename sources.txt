@@ -9,5 +9,6 @@ src/BubbleSort.java
 src/InsertionSort.java
 src/HeapSort.java
 src/BinarySearch.java
-
 src/QuickSort.java
+src/AlgorithmPage.java
+src/AlgorithmStep.java
