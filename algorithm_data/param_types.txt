@@ -1,0 +1,13 @@
+number_input
+dropdown
+
+examples:
+
+{
+    "type":"number_input"
+}
+
+{
+    "type":"dropdown",
+    "values": ["ascending", "descending"]
+}

@@ -1,0 +1,16 @@
+{
+    "name": "Quicksort",
+    "description": "A divide and conquer algorithm that sorts a list by continuously partitioning it into increasingly sorted sub-halves. Is in\ngeneral the fastest sort algorithm",
+    "steps": [
+        "If the list has only one element, short-circuit.",
+        "Pick a number p to be the \"pivot\". Let pI = the index of the pivot",
+        "Partition the list such that all numbers < p are on the left side of the list and all numbers greater are on the right. At this\npoint p will be in its correct position in the list.",
+        "Repeat the same steps for sublists [0, pI) and (pI, list.size())"
+    ],
+    "params": [
+        {
+            "type": "dropdown",
+            "values": ["ascending", "descending"]
+        }
+    ]
+}

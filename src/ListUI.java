@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import javafx.util.Duration;
 import javafx.animation.*;
 import javafx.scene.*;
-import javafx.scene.paint.Color;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
@@ -63,7 +63,7 @@ public class ListUI {
 
         textInt.text.setX(getXCoordOfNum(currInput.size() - 1, textInt.text.getLayoutBounds().getWidth()));
         textInt.text.setY(inputY);
-        
+
         group.getChildren().add(textInt.text);
     }
 
@@ -107,27 +107,11 @@ public class ListUI {
 
         //once the animation finishes, we reset the translate x values so nothing weird later happens later
         parallelAnimation.setOnFinished(event -> {
-            //firstText.setTranslateX(0);
-            //firstText.setX(secondTextX);
-
-            //secondText.setTranslateX(0);
-            //secondText.setX(firstTextX);
-            // var firstTextX = firstText.getX();
-            // firstText.setX(secondText.getX());
-            // secondText.setX(firstTextX);
-
             for (var v : currInput) {
                 System.out.print(v.value + " ");
             }
 
-            System.out.print(" --> ");
-
-            //making sure that the list saved in code is the same as the list order on the screen
             Collections.swap(currInput, firstIdx, secondIdx);
-            // for (var i : currInput) {
-            //     System.out.print(i.value + " ");
-            //     System.out.println();
-            // }
         });
         parallelAnimation.setCycleCount(1); // Ensure it runs only once
 
