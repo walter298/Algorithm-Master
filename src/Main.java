@@ -55,6 +55,18 @@ public class Main extends Application {
         return InsertionButton;
     }
 
+    private Button makeHeapSortButton(Group group) {
+        var HeapButton = new Button("Heap Sort");
+        HeapButton.setLayoutX(100);
+        HeapButton.setLayoutY(500);
+        HeapButton.setOnMouseClicked(event -> {
+            HeapSort.sortTree(group, new ArrayList<Integer>(Arrays.asList(5, 2, 9, 1, 0, 7, 6)));
+            HeapButton.setDisable(true);
+        });
+        return HeapButton;
+    }
+
+
     @Override 
     public void start(Stage stage) {
         var group = new Group();
@@ -62,7 +74,7 @@ public class Main extends Application {
         var scene = new Scene(group, Color.AZURE);
         stage.setScene(scene);
 
-        group.getChildren().addAll(makeSelectionSortButton(group), makeQuicksortButton(group), makeBubbleSortButton(group), makeInsertionSortButton(group));
+        group.getChildren().addAll(makeSelectionSortButton(group), makeQuicksortButton(group), makeBubbleSortButton(group), makeInsertionSortButton(group), makeHeapSortButton(group));
 
         stage.setFullScreen(true);
         stage.setTitle("Algorithm Visualizer");
