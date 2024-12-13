@@ -4,5 +4,14 @@
     "steps": [
         "Let K be the first index whose element does not match a given predicate. If K does not exist, then the entire input is \nalready partitioned and we can short-circuit.",
         "For each index I > K: if input[I] matches predicate: swap input[K] and input[I], and increment K"
+    ],
+    "params": [
+        {
+            "type": "dropdown",
+            "values": ["<", ">", "=="]
+        },
+        {
+            "type":"number_input"
+        }
     ]
 }

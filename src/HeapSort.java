@@ -12,7 +12,7 @@ public class HeapSort {
     public static void sortTree(Group group, ArrayList<Integer> integers) {
         ListUI newTreeList = new ListUI(group, integers, 270, 500);
 
-        OnDemandAnimationList animations = new OnDemandAnimationList();
+        AlgorithmStepList animations = new AlgorithmStepList();
     
     // source of skeleton for code: https://www.geeksforgeeks.org/java-program-for-heap-sort/
         int n = integers.size();
@@ -28,7 +28,7 @@ public class HeapSort {
             //root with the last node (last value on the list)
             Collections.swap(integers, 0, j);
             final int rootValue = 0, lastValue = j;
-            animations.schedule(() -> { return newTreeList.swap(rootValue, lastValue); });
+            animations.addStep(() -> { return newTreeList.swap(rootValue, lastValue); }, null);
             //max heapify the shortened heap now that the root (max value) is in it's
             //correct location on the list and is "out of the way"
             heapify(integers, j, 0, animations, newTreeList);
@@ -38,8 +38,7 @@ public class HeapSort {
  
     // To heapify a subtree rooted with node i which is
     // an index in arr[]. n is size of heap
-    private static void heapify(ArrayList<Integer> numbers, int n, int i, OnDemandAnimationList animations, ListUI treeList)
-    {
+    private static void heapify(ArrayList<Integer> numbers, int n, int i, AlgorithmStepList animations, ListUI treeList) {
         int largest = i; // Initialize largest as root
         int l = 2 * i + 1; // left = 2*i + 1
         int r = 2 * i + 2; // right = 2*i + 2
@@ -59,7 +58,7 @@ public class HeapSort {
             //swap largest number with root to make max heap more accurate
             Collections.swap(numbers, i, largest);
             final int rootValue = i, largerValue = largest;
-            animations.schedule(() -> { return treeList.swap(rootValue, largerValue); });
+            animations.addStep(() -> { return treeList.swap(rootValue, largerValue); }, null);
 
             // Recursively heapify the affected sub-tree
             heapify(numbers, n, largest, animations, treeList);

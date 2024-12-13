@@ -3,6 +3,8 @@ package src;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.function.Function;
 
 import javafx.scene.Group;
@@ -17,7 +19,7 @@ public class Partition {
         return last;
     }
 
-    public static int partition(OnDemandAnimationList animations, ListUI visualList, ArrayList<Integer> integers, Function<Integer, Boolean> pred, int first, int last) {
+    public static int partition(AlgorithmStepList steps, ListUI visualList, ArrayList<Integer> integers, Function<Integer, Boolean> pred, int first, int last) {
         var start = findFirstNotMatch(integers, pred, first, last);
         if (start == integers.size()) {
             return start;
@@ -27,7 +29,13 @@ public class Partition {
             if (pred.apply(integers.get(i))) {
                 Collections.swap(integers, i, start);
                 final int iCopy = i, startCopy = start;
-                animations.schedule(() -> { return visualList.swap(iCopy, startCopy); });
+
+                var varState = new HashMap<String, String>();
+                varState.put("K", Integer.toString(iCopy));
+                varState.put("I", Integer.toString(i));
+
+                steps.addStep(() -> { return visualList.swap(iCopy, startCopy); }, varState);
+
                 start++;
             }
         }
@@ -35,34 +43,29 @@ public class Partition {
         return start;
     }
 
-    public static void partition(OnDemandAnimationList animations, ListUI visualList, ArrayList<Integer> integers, Function<Integer, Boolean> pred) {
-        partition(animations, visualList, integers, pred, 0, integers.size());
-        // var start = findFirstNotMatch(integers, pred, 0, integers.size());
-        // if (start == integers.size()) {
-        //     return;
-        // }
-
-        // for (int i = start + 1; i < integers.size(); i++) {
-        //     if (pred.apply(integers.get(i))) {
-        //         Collections.swap(integers, i, start);
-        //         final int iCopy = i, startCopy = start;
-        //         animations.schedule(() -> { return visualList.swap(iCopy, startCopy); });
-        //         start++;
-        //     }
-        // }
+    public static void partition(AlgorithmStepList steps, ListUI visualList, ArrayList<Integer> integers, Function<Integer, Boolean> pred) {
+        partition(steps, visualList, integers, pred, 0, integers.size());
     }
 
-    public static void partition(Group group, ArrayList<Integer> integers, Function<Integer, Boolean> pred) {
-        //var start = findFirstNotMatch(integers, pred);
-        // if (start == integers.size()) {
-        //     return;
-        // }
-
-        var animations = new OnDemandAnimationList();
-        var visualList = new ListUI(group, integers, 270, 470);
-
-        partition(animations, visualList, integers, pred);
+    private static Function<Integer, Boolean> parsePred(String operator, String strValue) {
+        final int value = Integer.parseInt(strValue);
     
-        animations.run();
+        if (operator.equals("<")) {
+            return (i) -> { return i < value; }; 
+        } else if (operator.equals(">")) {
+            return (i) -> { return i > value; }; 
+        } else {
+            return (i) -> { return i == value; }; 
+        }
+    }
+
+    public static AlgorithmStepList partition(Group group, ArrayList<Integer> integers, List<String> args) {
+        var steps = new AlgorithmStepList();
+        var pred = parsePred(args.get(0), args.get(1));
+        var visualList = new ListUI(group, integers, 270, 670); //todo: store x-y coordinate in constants
+
+        partition(steps, visualList, integers, pred);
+        
+        return steps;
     }
 }

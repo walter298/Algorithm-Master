@@ -1,6 +1,5 @@
 src/Main.java
 src/ListUI.java
-src/OnDemandAnimationList.java
 src/SelectionSort.java
 src/Partition.java
 src/NthElement.java
@@ -11,4 +10,6 @@ src/HeapSort.java
 src/BinarySearch.java
 src/QuickSort.java
 src/AlgorithmPage.java
-src/AlgorithmStep.java
+src/AlgorithmStepList.java
+src/AlgorithmGenerator.java
+src/AlgorithmArgParser.java
