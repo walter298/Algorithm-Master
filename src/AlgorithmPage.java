@@ -24,6 +24,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -32,10 +33,10 @@ public class AlgorithmPage {
         return "algorithm_data/" + filename;
     }
     
+    private Scene scene;
     private VBox layoutRoot;
     private Group algorithmSection;
     private ArrayList<Supplier<String>> paramValues;
-    private AlgorithmGenerator algorithm;
     private AlgorithmGenerator algorithmGenerator;
     private volatile AlgorithmStepList algorithmStepList;
 
@@ -75,6 +76,14 @@ public class AlgorithmPage {
         r.setMaxSize(width, height);
     }   
 
+    private Button makeBackButton(Stage stage, Scene homepage) {
+        var button = new Button("Home");
+        button.setOnMouseClicked(event -> {
+            stage.setScene(homepage);
+        });
+        return button;
+    }
+
     private void writeDescription(JSONObject jsonRoot) {
         var descriptionTitle = makeText("Description");
         descriptionTitle.setUnderline(true);
@@ -86,7 +95,6 @@ public class AlgorithmPage {
     private void writeTitle(JSONObject jsonRoot) {
         var str = jsonRoot.getString("name") + "\n";
         var text = makeText(str, 50);
-        text.setUnderline(true);
         layoutRoot.getChildren().add(centerNode(text));
     }
 
@@ -176,8 +184,11 @@ public class AlgorithmPage {
         inputParamsBox.setAlignment(Pos.CENTER);
     }
 
-    AlgorithmPage(String jsonPath, AlgorithmGenerator algorithmGenerator) {
+    AlgorithmPage(String jsonPath, AlgorithmGenerator algorithmGenerator, Stage stage, Scene homepage) {
         layoutRoot = new VBox();
+        layoutRoot.setPadding(Insets.EMPTY);
+
+        scene = new Scene(layoutRoot);
         algorithmSection = new Group();
         algorithmStepList = new AlgorithmStepList();
 
@@ -189,14 +200,15 @@ public class AlgorithmPage {
             JSONObject jsonRoot = new JSONObject(fileStr);
 
             //create scene elements
+            layoutRoot.getChildren().add(makeBackButton(stage, homepage));
             writeTitle(jsonRoot);
             writeDescription(jsonRoot);
-            writeSteps(jsonRoot);
             makeAlgorithmForm(jsonRoot);
             makeSubmitButton();
-
+            
             layoutRoot.getChildren().add(algorithmSection);
-            VBox.setMargin(algorithmSection, new Insets(50, 0, 0, 0));
+            
+            writeSteps(jsonRoot);
 
             showAlgorithm();
         } catch (Exception e) { //FileIOException or JSONException
@@ -206,10 +218,6 @@ public class AlgorithmPage {
     }
 
     public void run(Stage stage) {
-        stage.setFullScreen(true);
-        
-        var scene = new Scene(layoutRoot);
-        
         stage.setScene(scene);
         stage.show();
     }

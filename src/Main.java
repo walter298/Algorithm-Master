@@ -7,16 +7,15 @@ import javafx.stage.*;
 public class Main extends Application {
     @Override 
     public void start(Stage stage) {
-        stage.setFullScreen(true);
+        //don't go full screen, but show enough so that user can see the algorithm
+        stage.setX(0);
+        stage.setY(0);
+        stage.setWidth(Screen.getPrimary().getBounds().getWidth() / 1.3);
+        stage.setHeight(Screen.getPrimary().getBounds().getHeight() / 1.3);
         
         var homepageScene = Homepage.createScene(stage);
         stage.setScene(homepageScene);
         stage.show();
-        // var partitionPage = new AlgorithmPage("partition.json", new AlgorithmGenerator(Partition::partition));
-        //var quicksortPage = new AlgorithmPage("quicksort.json", new AlgorithmGenerator(QuickSort::sort));
-        // var selectionSortPage = new AlgorithmPage("selection_sort.json", new AlgorithmGenerator(SelectionSort::sort));
-        
-        //quicksortPage.run(stage);
     }
 
     public static void main(String[] args) {
