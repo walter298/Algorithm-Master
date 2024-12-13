@@ -1,0 +1,13 @@
+{
+    "name": "Nth Element",
+    "description": "Find the Nth smallest element in an unsorted list in O(n) time.",
+    "steps": [
+        "Blah Blah",
+        "Cool beans"
+    ],
+    "params": [
+        {
+            "type":"number_input"
+        }
+    ]
+}

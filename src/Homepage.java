@@ -59,6 +59,7 @@ public class Homepage {
 
         var partitionButton = makeButton("Partition", stage, new AlgorithmPage("partition.json", new AlgorithmGenerator(Partition::partition)));
         var quickSortButton = makeButton("Quicksort", stage, new AlgorithmPage("quicksort.json", new AlgorithmGenerator(QuickSort::sort)));
+        var nthElementButton = makeButton("Nth Element", stage, new AlgorithmPage("nthelement.json", new AlgorithmGenerator(NthElement::find)));
         //partitionButton.setPrefWidth(200);
 
         System.out.println("Created buttons!");
@@ -93,7 +94,7 @@ public class Homepage {
         //layout.setStyle("-fx-background-color: azure;");
 
         // Add title and instruction to the layout
-        layout.getChildren().addAll(title, instruction, selectionSortButton, partitionButton, quickSortButton);
+        layout.getChildren().addAll(title, instruction, selectionSortButton, partitionButton, quickSortButton, nthElementButton);
         VBox.setMargin(layout, new Insets(100, 0, 0, 0));
         
         // Dynamically create buttons for each algorithm
