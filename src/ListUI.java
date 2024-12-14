@@ -1,7 +1,6 @@
 package src;
 
-import java.awt.Color;
-import java.time.Duration;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList;
@@ -93,17 +92,18 @@ public class ListUI{
 
         var moveDown = new TranslateTransition(Duration.millis(500), text);
         moveDown.setByY(text.getBoundsInLocal().getHeight());
+        text.setFill(Color.PINK);
         return new SequentialTransition(moveUp, moveHorizontally, moveDown);
     }
 
     private SequentialTransition incorrectToCorrectColors (Text text) {
-        FillTransition correcting = new FillTransition(Duration.millis(850), text, Color.RED, Color.GREEN); 
-        correcting.setCycleCount(1); 
-        correcting.setAutoReverse(false); 
+        FillTransition correcting = new FillTransition(Duration.millis(850), text, Color.BLACK, Color.RED); 
+        correcting.setCycleCount(2); 
+        correcting.setAutoReverse(true); 
         
-        FillTransition corrected = new FillTransition(Duration.millis(850), text, Color.GREEN, Color.BLACK); 
-        corrected.setCycleCount(1); 
-        corrected.setAutoReverse(false);
+        FillTransition corrected = new FillTransition(Duration.millis(850), text, Color.RED, Color.BLUE); 
+        corrected.setCycleCount(2); 
+        corrected.setAutoReverse(true);
 
         return new SequentialTransition(correcting, corrected);
     }
@@ -132,19 +132,20 @@ public class ListUI{
         //combine both color changes so they happen at the same time
         var parallelColor = new ParallelTransition(firstTextColorChange, secondTextColorChange); 
 
+        //combine actual swap with color changes to highlight the numbers that are being swapped
+        var parallelAnimationWithColor = new ParallelTransition(parallelAnimation, parallelColor);
+
         //once the animation finishes, we reset the translate x values so nothing weird later happens later
-        parallelAnimation.setOnFinished(event -> {
+        parallelAnimationWithColor.setOnFinished(event -> {
             for (var v : currInput) {
                 System.out.print(v.value + " ");
             }
 
             Collections.swap(currInput, firstIdx, secondIdx);
         });
-        parallelAnimation.setCycleCount(1); // Ensure it runs only once
+        parallelAnimationWithColor.setCycleCount(1); // Ensure it runs only once
 
-        //combine actual swap with color changes to highlight the numbers that are being swapped
-        var parallelAnimationWithColor = new ParallelTransition(parallelAnimation, parallelColor);
-
+        
         // return parallelAnimation;
         return parallelAnimationWithColor;
     }
@@ -156,20 +157,21 @@ public class ListUI{
 
     //helps illustrate to the user what numbers are being looked at in the moment
     
-    public FillTransition compare(int idx1, int idx2, Color oldColor, Color newColor){
-        FillTransition newColor = new FillTransition(Duration.millis(850), text, oldColor, newColor); 
-        newColor.setCycleCount(1); 
-        newColor.setAutoReverse(true); 
-        return newColor;
-    }
+    // public FillTransition compare(int idx1, int idx2, Color oldColor, Color newColor){
+    //     FillTransition newColor = new FillTransition(Duration.millis(850), text, oldColor, newColor); 
+    //     newColor.setCycleCount(1); 
+    //     newColor.setAutoReverse(true); 
+    //     return newColor;
+    // }
 
+    //haven't tested this method out yet
     public ParallelTransition compare(int firstIdx, int secondIdx) {
         //referencing the two texts that will be swapped 
         var firstText = currInput.get(firstIdx).text;
         var secondText = currInput.get(secondIdx).text;
 
         //change their color from black to blue
-        FillTransition firstTextColorChange = new FillTransition(Duration.millis(500), firstText, Color.BLACK, Color.BLUE); 
+        FillTransition firstTextColorChange = new FillTransition(Duration.millis(850), firstText, Color.BLACK, Color.BLUE); 
         firstTextColorChange.setCycleCount(1); 
         firstTextColorChange.setAutoReverse(true);
         FillTransition secondTextColorChange = new FillTransition(Duration.millis(850), secondText, Color.BLACK, Color.BLUE); 
@@ -178,7 +180,7 @@ public class ListUI{
         
         //combine both color changes so they happen at the same time
         var parallelColor = new ParallelTransition(firstTextColorChange, secondTextColorChange); 
-        
+
         return parallelColor;
     }
 
