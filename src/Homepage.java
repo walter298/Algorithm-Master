@@ -30,7 +30,7 @@ public class Homepage {
     }
 
     public static Scene createScene(Stage stage) throws Exception {
-        var layout = new VBox();
+        var layout = new VBox(20);
         var homepage = new Scene(layout);
         
         Label title = new Label("Algorithms!");
@@ -48,7 +48,6 @@ public class Homepage {
         
         // Add title and instruction to the layout
         layout.getChildren().addAll(title, instruction, selectionSortButton, partitionButton, quickSortButton, nthElementButton);
-        //VBox.setMargin(layout, new Insets(100, 0, 0, 0));
         
         // Return the homepage scene
         return homepage;

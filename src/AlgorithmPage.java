@@ -228,8 +228,21 @@ public class AlgorithmPage {
 
     private void viewSourceCode(VBox layoutRoot, String filePath) throws IOException {
         var content = Files.readString(Paths.get(filePath));
+        var lines = content.split("\n");
+        var lineCountStr = Integer.toString(lines.length);
 
-        var textArea = new TextArea(content);
+        var numberedLines = new String();
+
+        for (int i = 0; i < lines.length; i++) {
+            var idxStr = new StringBuilder(Integer.toString(i));
+            for (int j = 0; j < lineCountStr.length() - idxStr.length(); j++) {
+                idxStr.append(" ");
+            }
+            
+            numberedLines = numberedLines + "\n" + idxStr.toString()  + "   " + lines[i];
+        }
+        
+        var textArea = new TextArea(numberedLines);
         textArea.setEditable(false);
 
         //make text area have black background and white text
