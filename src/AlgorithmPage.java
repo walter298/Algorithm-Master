@@ -3,11 +3,14 @@ package src;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.Supplier;
+
+import javax.xml.transform.Source;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -19,7 +22,10 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
@@ -33,11 +39,12 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class AlgorithmPage {
-    public static String getPath(String filename) {
-        return "algorithm_data/" + filename;
+    public static String getAlgorithmDirectory(String algorithmName) {
+        return "algorithm_data/" + algorithmName + "/";
     }
     
     private Scene scene;
+    private ScrollPane scrollPane;
     private VBox layoutRoot;
     private ListUI currInput;
     private HBox algorithmSection;
@@ -53,6 +60,7 @@ public class AlgorithmPage {
                     algorithmStepList.run();
                 } else {
                     submitButton.setDisable(false);
+                    scrollPane.setDisable(false);
                 }
             })
         );
@@ -71,19 +79,6 @@ public class AlgorithmPage {
         return makeText(str, Double.MAX_VALUE, FONT_SIZE);
     }
 
-    private static StackPane centerNode(Node n) {
-        var centeredPane = new StackPane(n);
-        centeredPane.setAlignment(Pos.TOP_CENTER); 
-        //centeredPane;
-        return centeredPane;
-    }
-
-    private void setSize(Region r, int width, int height) {
-        r.setPrefSize(width, height);
-        r.setMinSize(width, height);
-        r.setMaxSize(width, height);
-    }   
-
     private Button makeBackButton(Stage stage, Scene homepage) {
         var button = new Button("Home");
         button.setOnMouseClicked(event -> {
@@ -96,12 +91,14 @@ public class AlgorithmPage {
     private void writeTitle(JSONObject jsonRoot) {
         var text = new Text(jsonRoot.getString("name"));
         text.setFont(new Font(50));
-        layoutRoot.getChildren().add(centerNode(text));
+        layoutRoot.getChildren().add(LayoutUtil.centerNode(text));
     }
 
     private void writeDescription(JSONObject jsonRoot) {
         var textFlow = new TextFlow();
         textFlow.setPadding(new Insets(0, 0, 0, 120));
+        textFlow.prefWidthProperty().bind(scrollPane.viewportBoundsProperty().map(bounds -> bounds.getWidth()));
+
         var description = new Text(jsonRoot.getString("description"));
         description.setFont(new Font(23));
         textFlow.getChildren().addAll(description);
@@ -128,7 +125,6 @@ public class AlgorithmPage {
         currInput.clear(algorithmSection);
         if (!nums.isEmpty()) {
             currInput = new ListUI(algorithmSection, nums.get());
-            currInput.printXCoordinates();
         }
     }
 
@@ -137,7 +133,7 @@ public class AlgorithmPage {
         var listInput = new TextField();
         listInput.setPromptText("Enter a list of numbers");
 
-        setSize(listInput, 350, INPUT_HEIGHT);
+        LayoutUtil.setSize(listInput, 350, INPUT_HEIGHT);
         listInput.setFont(new Font(23));
 
         listInput.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -153,7 +149,7 @@ public class AlgorithmPage {
             dropdown.getItems().add(values.getString(i));
         }
         dropdown.setValue(values.getString(0));
-        setSize(dropdown, 115, INPUT_HEIGHT);
+        LayoutUtil.setSize(dropdown, 115, INPUT_HEIGHT);
         paramValues.add(() -> { return dropdown.getValue(); });
         return dropdown;
     }
@@ -161,7 +157,7 @@ public class AlgorithmPage {
     private TextField makeNumberInput() {
         var input = new TextField();
 
-        setSize(input, 75, INPUT_HEIGHT);
+        LayoutUtil.setSize(input, 75, INPUT_HEIGHT);
 
         //restrict input to only numbers
         input.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -188,7 +184,7 @@ public class AlgorithmPage {
 
     private void makeSubmitButton(HBox inputParamsBox) {
         submitButton = new Button("Execute");
-        setSize(submitButton, 140, INPUT_HEIGHT);
+        LayoutUtil.setSize(submitButton, 140, INPUT_HEIGHT);
         submitButton.setOnMouseClicked(event -> {
             var args = new ArrayList<String>();
             for (var input : paramValues) {
@@ -196,7 +192,7 @@ public class AlgorithmPage {
             }
             
             algorithmStepList = algorithmGenerator.generate(currInput, currInput.toIntegers(), args);
-            
+            algorithmSection.requestFocus(); //prevent automatic scrolling down when numbers move up
             submitButton.setDisable(true);
         });
         inputParamsBox.getChildren().add(submitButton);
@@ -216,7 +212,7 @@ public class AlgorithmPage {
     private void writeSteps(JSONObject jsonRoot) {
         var stepsTitle = makeText(layoutRoot, "Steps");
         stepsTitle.setUnderline(true);
-        layoutRoot.getChildren().add(centerNode(stepsTitle));
+        layoutRoot.getChildren().add(LayoutUtil.centerNode(stepsTitle));
         
         JSONArray stepsJson = jsonRoot.getJSONArray("steps");
         
@@ -230,15 +226,29 @@ public class AlgorithmPage {
         layoutRoot.getChildren().add(stepsVBox);
     }
 
-    AlgorithmPage(String jsonPath, AlgorithmGenerator algorithmGenerator, Stage stage, Scene homepage) {
-        System.out.println("Creating algorithm page!");
+    private void viewSourceCode(VBox layoutRoot, String filePath) throws IOException {
+        var content = Files.readString(Paths.get(filePath));
 
+        var textArea = new TextArea(content);
+        textArea.setEditable(false);
+
+        //make text area have black background and white text
+        textArea.setStyle("-fx-control-inner-background: black;");
+        
+        LayoutUtil.setSize(textArea, 700, 700);
+        
+        var hbox = new HBox();
+        hbox.setPadding(new Insets(0, 0, 0, 120));
+        hbox.getChildren().add(textArea);
+
+        layoutRoot.getChildren().add(hbox);
+    }
+
+    AlgorithmPage(String algorithmName, AlgorithmGenerator algorithmGenerator, Stage stage, Scene homepage) throws Exception {
         layoutRoot = new VBox();
-        //layoutRoot.setPadding(Insets.EMPTY);
+        scrollPane = new ScrollPane(layoutRoot);
 
-        scene = new Scene(layoutRoot);
-
-        algorithmSection = new HBox(20);
+        algorithmSection = new HBox(20); //20 is spacing between numbers
         algorithmSection.setAlignment(Pos.CENTER);
 
         algorithmStepList = new AlgorithmStepList();
@@ -246,26 +256,23 @@ public class AlgorithmPage {
         paramValues = new ArrayList<Supplier<String>>();
         this.algorithmGenerator = algorithmGenerator;
         
-        System.out.println("Created algorithm generator!");
-        try {
-            String fileStr = Files.readString(Paths.get(getPath(jsonPath))); 
-            JSONObject jsonRoot = new JSONObject(fileStr);
+        String jsonFile = Files.readString(Paths.get(getAlgorithmDirectory(algorithmName) + "/" + algorithmName + ".json")); 
+        JSONObject jsonRoot = new JSONObject(jsonFile);
 
-            //create scene elements
-            layoutRoot.getChildren().add(makeBackButton(stage, homepage));
-            writeTitle(jsonRoot);
-            writeDescription(jsonRoot);
-            makeAlgorithmForm(jsonRoot);
-            
-            layoutRoot.getChildren().add(algorithmSection);
-            
-            currInput = new ListUI();
+        //create scene elements
+        layoutRoot.getChildren().add(makeBackButton(stage, homepage));
+        writeTitle(jsonRoot);
+        writeDescription(jsonRoot);
+        makeAlgorithmForm(jsonRoot);
+        
+        layoutRoot.getChildren().add(algorithmSection);
+        scene = new Scene(scrollPane);
 
-            showAlgorithm();
-        } catch (Exception e) { //FileIOException or JSONException
-            System.out.println(System.getProperty("user.dir"));
-            e.printStackTrace();
-        }
+        currInput = new ListUI();
+
+        showAlgorithm();
+
+        viewSourceCode(layoutRoot, getAlgorithmDirectory(algorithmName) + "/" + algorithmName + ".hpp");
     }
 
     public void run(Stage stage) {

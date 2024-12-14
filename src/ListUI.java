@@ -43,13 +43,6 @@ public class ListUI {
         return nums;
     }
 
-    void printXCoordinates() {
-        for (var text : currInput) {
-            System.out.print(text.text.getLayoutX() + " ");
-            System.out.println();
-        }
-    }
-
     public ListUI() {
         this.currInput = new ArrayList<>();
     }

@@ -29,7 +29,7 @@ public class Homepage {
         return button;
     }
 
-    public static Scene createScene(Stage stage) {
+    public static Scene createScene(Stage stage) throws Exception {
         var layout = new VBox();
         var homepage = new Scene(layout);
         
@@ -39,10 +39,10 @@ public class Homepage {
         Label instruction = new Label("Please choose the algorithm you want to display:");
         instruction.setFont(new Font("Arial", 18));
 
-        var selectionSortButton = makeButton("Selection Sort", stage, new AlgorithmPage("selection_sort.json", SelectionSort::sort, stage, homepage));
-        var partitionButton = makeButton("Partition", stage, new AlgorithmPage("partition.json", Partition::partition, stage, homepage));
-        var quickSortButton = makeButton("Quicksort", stage, new AlgorithmPage("quicksort.json", QuickSort::sort, stage, homepage));
-        var nthElementButton = makeButton("Nth Element", stage, new AlgorithmPage("nthelement.json", NthElement::find, stage, homepage));
+        var selectionSortButton = makeButton("Selection Sort", stage, new AlgorithmPage("selection_sort", SelectionSort::sort, stage, homepage));
+        var partitionButton = makeButton("Partition", stage, new AlgorithmPage("partition", Partition::partition, stage, homepage));
+        var quickSortButton = makeButton("Quicksort", stage, new AlgorithmPage("quicksort", QuickSort::sort, stage, homepage));
+        var nthElementButton = makeButton("Nth Element", stage, new AlgorithmPage("nth_element", NthElement::find, stage, homepage));
         
         layout.setAlignment(Pos.CENTER);
         
