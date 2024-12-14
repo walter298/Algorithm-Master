@@ -14,3 +14,4 @@ src/AlgorithmStepList.java
 src/AlgorithmGenerator.java
 src/AlgorithmArgParser.java
 src/Homepage.java
+src/LayoutUtil.java

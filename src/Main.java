@@ -15,9 +15,13 @@ public class Main extends Application {
         stage.setWidth(Screen.getPrimary().getBounds().getWidth() / 1.3);
         stage.setHeight(Screen.getPrimary().getBounds().getHeight() / 1.3);
 
-        var homepageScene = Homepage.createScene(stage);
-        stage.setScene(homepageScene);
-        stage.show();
+        try {
+            var homepageScene = Homepage.createScene(stage);
+            stage.setScene(homepageScene);
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) {
