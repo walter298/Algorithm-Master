@@ -39,10 +39,10 @@ public class Homepage {
         Label instruction = new Label("Please choose the algorithm you want to display:");
         instruction.setFont(new Font("Arial", 18));
 
-        var selectionSortButton = makeButton("Selection Sort", stage, new AlgorithmPage("selection_sort.json", new AlgorithmGenerator(SelectionSort::sort), stage, homepage));
-        var partitionButton = makeButton("Partition", stage, new AlgorithmPage("partition.json", new AlgorithmGenerator(Partition::partition), stage, homepage));
-        var quickSortButton = makeButton("Quicksort", stage, new AlgorithmPage("quicksort.json", new AlgorithmGenerator(QuickSort::sort), stage, homepage));
-        var nthElementButton = makeButton("Nth Element", stage, new AlgorithmPage("nthelement.json", new AlgorithmGenerator(NthElement::find), stage, homepage));
+        var selectionSortButton = makeButton("Selection Sort", stage, new AlgorithmPage("selection_sort.json", SelectionSort::sort, stage, homepage));
+        var partitionButton = makeButton("Partition", stage, new AlgorithmPage("partition.json", Partition::partition, stage, homepage));
+        var quickSortButton = makeButton("Quicksort", stage, new AlgorithmPage("quicksort.json", QuickSort::sort, stage, homepage));
+        var nthElementButton = makeButton("Nth Element", stage, new AlgorithmPage("nthelement.json", NthElement::find, stage, homepage));
         
         layout.setAlignment(Pos.CENTER);
         

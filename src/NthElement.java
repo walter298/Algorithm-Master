@@ -6,10 +6,9 @@ import java.util.List;
 import javafx.scene.Group;
 
 public class NthElement {
-    public static AlgorithmStepList find(Group group, ArrayList<Integer> integers, List<String> args){
+    public static AlgorithmStepList find(ListUI visualList, ArrayList<Integer> integers, List<String> args){
         var steps = new AlgorithmStepList();
-        var visualList = new ListUI(group, integers, 270, 670);
-
+        
         int value = kthSmallest(steps, visualList, integers, 0, integers.size()-1, Integer.parseInt(args.get(0)));
         
         //color or show the number we want to see

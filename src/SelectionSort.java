@@ -4,11 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javafx.scene.Group;
-
 public class SelectionSort {
-    public static AlgorithmStepList sort(Group group, ArrayList<Integer> integers, List<String> args) {
-        var ui = new ListUI(group, integers, 270, 670);
+    public static AlgorithmStepList sort(ListUI visualList, ArrayList<Integer> integers, List<String> args) {
         var sortPred = AlgorithmArgParser.parseSortPred(args.get(0));
 
         var steps = new AlgorithmStepList();
@@ -23,7 +20,7 @@ public class SelectionSort {
             if (min != i) {
                 Collections.swap(integers, i, min);
                 final int iCopy = i, minCopy = min;
-                steps.addStep(() -> { return ui.swap(iCopy, minCopy); }, null);
+                steps.addStep(() -> { return visualList.swap(iCopy, minCopy); }, null);
             }
         }
         

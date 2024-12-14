@@ -9,7 +9,7 @@ import javafx.scene.layout.VBox;
 
 public class BubbleSort {
     public static void bubbles(Group group, ArrayList<Integer> integers) {
-        var bubbleList = new ListUI(group, integers, 270, 400);
+        //var bubbleList = new ListUI(group, integers, 270);
 
         var animations = new AlgorithmStepList();
 

@@ -1,6 +1,6 @@
 {
     "name": "Selection Sort",
-    "description": "A glatial O(n^2) algorithm that sorts a list by continuously performing a linear search for the next smallest value\nand swapping it into the right position",
+    "description": "A glatial O(n^2) algorithm that sorts a list by continuously performing a linear search for the next smallest value and swapping it into the right position",
     "steps": [
         "Let [b, e) be the index range of list. Let list[s] be the smallest value in list[b e).",
         "Swap list[b], list[s]",

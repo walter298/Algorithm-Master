@@ -1,5 +1,7 @@
 package src;
 
+import java.util.ArrayList;
+
 import javafx.application.*;
 import javafx.stage.*;
 
@@ -12,7 +14,7 @@ public class Main extends Application {
         stage.setY(0);
         stage.setWidth(Screen.getPrimary().getBounds().getWidth() / 1.3);
         stage.setHeight(Screen.getPrimary().getBounds().getHeight() / 1.3);
-        
+
         var homepageScene = Homepage.createScene(stage);
         stage.setScene(homepageScene);
         stage.show();
