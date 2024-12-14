@@ -7,7 +7,10 @@ import java.util.ArrayList;
 import javafx.util.Duration;
 import javafx.animation.*;
 import javafx.scene.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
@@ -15,9 +18,6 @@ public class ListUI {
     private static double FONT_SIZE = 80;
     private static double NUMBER_GAP = 28;
     
-    private final double inputX;
-    private final double inputY;
-
     public class TextInteger {
         public Text text;
         public Integer value;
@@ -31,40 +31,37 @@ public class ListUI {
 
     private volatile ArrayList<TextInteger> currInput;
     
-    public ListUI(Group group, ArrayList<Integer> input, int x, int y) {
-        inputX = x;
-        inputY = y;
+    public void setColor(int idx, Color color) {
+        currInput.get(idx).text.setFill(color);
+    }
 
-        currInput = new ArrayList<>();
-        
-        for (var i : input) {
-            append(i, group);
+    public ArrayList<Integer> toIntegers() {
+        var nums = new ArrayList<Integer>();
+        for (var text : currInput) {
+            nums.add(text.value);
+        } 
+        return nums;
+    }
+
+    void printXCoordinates() {
+        for (var text : currInput) {
+            System.out.print(text.text.getLayoutX() + " ");
+            System.out.println();
         }
     }
 
-    private boolean inBounds(int idx) {
-        return idx >= 0 && idx < currInput.size();
+    public ListUI() {
+        this.currInput = new ArrayList<>();
     }
 
-    private double getXCoordOfNum(int idx, double textWidth) {
-        if (!inBounds(idx)) {
-            throw new IndexOutOfBoundsException();
+    public ListUI(HBox box, ArrayList<Integer> input) {
+        this();
+        for (var num : input) {
+            var textInt = new TextInteger(num);
+            textInt.text.setY(box.getLayoutY());
+            currInput.add(textInt);
+            box.getChildren().add(textInt.text);
         }
-        var x = inputX;
-        for (int i = 0; i < currInput.size(); i++) {
-            x += currInput.get(i).text.getBoundsInLocal().getWidth() + NUMBER_GAP;
-        }
-        return x;
-    }  
-
-    public void append(Integer num, Group group) {
-        var textInt = new TextInteger(num);
-        currInput.add(textInt);
-
-        textInt.text.setX(getXCoordOfNum(currInput.size() - 1, textInt.text.getLayoutBounds().getWidth()));
-        textInt.text.setY(inputY);
-
-        group.getChildren().add(textInt.text);
     }
 
     public List<TextInteger> getData() {
@@ -76,11 +73,9 @@ public class ListUI {
         moveUp.setByY(-text.getBoundsInLocal().getHeight());
         
         var moveHorizontally = new TranslateTransition(Duration.millis(700), text);
-        var dist = (currInput.get(idxDest).text.getX() + currInput.get(idxDest).text.getTranslateX()) - (text.getX() + text.getTranslateX());
+        var dist = (currInput.get(idxDest).text.getLayoutX() + currInput.get(idxDest).text.getTranslateX()) - (text.getLayoutX() + text.getTranslateX());
         moveHorizontally.setByX(dist);
         
-        System.out.println(text.getText() + " moving by " + dist);
-
         var moveDown = new TranslateTransition(Duration.millis(500), text);
         moveDown.setByY(text.getBoundsInLocal().getHeight());
         
@@ -92,12 +87,6 @@ public class ListUI {
         var firstText = currInput.get(firstIdx).text;
         var secondText = currInput.get(secondIdx).text;
 
-        System.out.println("Integers swapped " + currInput.get(firstIdx).value + " and " + currInput.get(secondIdx).value);
-        System.out.println("Text swapped " + currInput.get(firstIdx).text.getText() + " and " + currInput.get(secondIdx).text.getText());
-        //save their x-values
-        // var firstTextX = firstText.getX();
-        // var secondTextX = secondText.getX();
-
         //animation that moves them up and over to their new correct positions
         var firstTextTranslation  = moveUpAndOverToIndex(firstText, secondIdx);
         var secondTextTranslation = moveUpAndOverToIndex(secondText, firstIdx);
@@ -105,21 +94,16 @@ public class ListUI {
         //combine both animations to happen at once
         var parallelAnimation = new ParallelTransition(firstTextTranslation, secondTextTranslation);
 
-        //once the animation finishes, we reset the translate x values so nothing weird later happens later
         parallelAnimation.setOnFinished(event -> {
-            for (var v : currInput) {
-                System.out.print(v.value + " ");
-            }
-
             Collections.swap(currInput, firstIdx, secondIdx);
         });
-        parallelAnimation.setCycleCount(1); // Ensure it runs only once
+        parallelAnimation.setCycleCount(1); 
 
         return parallelAnimation;
     }
 
-    public void clear(Group group) {
-        group.getChildren().clear();
+    public void clear(HBox box) {
+        box.getChildren().clear();
         currInput.clear();
     }
 }

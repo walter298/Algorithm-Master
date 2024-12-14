@@ -7,8 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.function.Function;
 
-import javafx.scene.Group;
-
 public class Partition {
     private static int findFirstNotMatch(ArrayList<Integer> integers, Function<Integer, Boolean> pred, int first, int last) {
         for (int i = first; i < last; i++) {
@@ -21,6 +19,7 @@ public class Partition {
 
     public static int partition(AlgorithmStepList steps, ListUI visualList, ArrayList<Integer> integers, Function<Integer, Boolean> pred, int first, int last) {
         var start = findFirstNotMatch(integers, pred, first, last);
+        
         if (start == integers.size()) {
             return start;
         }
@@ -48,6 +47,7 @@ public class Partition {
     }
 
     private static Function<Integer, Boolean> parsePred(String operator, String strValue) {
+        System.out.println("Parsing " + operator + " " + strValue);
         final int value = Integer.parseInt(strValue);
     
         if (operator.equals("<")) {
@@ -59,11 +59,10 @@ public class Partition {
         }
     }
 
-    public static AlgorithmStepList partition(Group group, ArrayList<Integer> integers, List<String> args) {
+    public static AlgorithmStepList partition(ListUI visualList, ArrayList<Integer> integers, List<String> args) {
         var steps = new AlgorithmStepList();
         var pred = parsePred(args.get(0), args.get(1));
-        var visualList = new ListUI(group, integers, 270, 670); //todo: store x-y coordinate in constants
-
+       
         partition(steps, visualList, integers, pred);
         
         return steps;

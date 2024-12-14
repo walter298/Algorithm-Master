@@ -6,6 +6,7 @@ import org.json.JSONObject;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import javafx.animation.KeyFrame;
@@ -14,6 +15,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -22,8 +24,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -35,7 +39,9 @@ public class AlgorithmPage {
     
     private Scene scene;
     private VBox layoutRoot;
-    private Group algorithmSection;
+    private ListUI currInput;
+    private HBox algorithmSection;
+    private Button submitButton;
     private ArrayList<Supplier<String>> paramValues;
     private AlgorithmGenerator algorithmGenerator;
     private volatile AlgorithmStepList algorithmStepList;
@@ -45,6 +51,8 @@ public class AlgorithmPage {
             new KeyFrame(Duration.millis(50), event -> {
                 if (!algorithmStepList.isEmpty()) {
                     algorithmStepList.run();
+                } else {
+                    submitButton.setDisable(false);
                 }
             })
         );
@@ -52,15 +60,15 @@ public class AlgorithmPage {
         timeline.play();
     }
 
-    private Text makeText(String str, int fontSize) {
+    private Text makeText(String str, double wrapping, int fontSize) {
         var text = new Text(str);
         text.setFont(new Font(fontSize));
         return text;
     }
 
-    private Text makeText(String str) {
+    private Text makeText(Region r, String str) {
         final int FONT_SIZE = 21;
-        return makeText(str, FONT_SIZE);
+        return makeText(str, Double.MAX_VALUE, FONT_SIZE);
     }
 
     private static StackPane centerNode(Node n) {
@@ -79,48 +87,64 @@ public class AlgorithmPage {
     private Button makeBackButton(Stage stage, Scene homepage) {
         var button = new Button("Home");
         button.setOnMouseClicked(event -> {
+            currInput.clear(algorithmSection);
             stage.setScene(homepage);
         });
         return button;
     }
 
-    private void writeDescription(JSONObject jsonRoot) {
-        var descriptionTitle = makeText("Description");
-        descriptionTitle.setUnderline(true);
-        layoutRoot.getChildren().add(centerNode(descriptionTitle));
-        var description = makeText(jsonRoot.getString("description"));
-        layoutRoot.getChildren().add(centerNode(description));
-    }
-
     private void writeTitle(JSONObject jsonRoot) {
-        var str = jsonRoot.getString("name") + "\n";
-        var text = makeText(str, 50);
+        var text = new Text(jsonRoot.getString("name"));
+        text.setFont(new Font(50));
         layoutRoot.getChildren().add(centerNode(text));
     }
 
-    private void writeSteps(JSONObject jsonRoot) {
-        var stepsTitle = makeText("Steps");
-        stepsTitle.setUnderline(true);
-        layoutRoot.getChildren().add(centerNode(stepsTitle));
-        
-        JSONArray stepsJson = jsonRoot.getJSONArray("steps");
-        
-        var stepsVBox = new VBox();
-        stepsVBox.setPadding(new Insets(0, 0, 0, 120));
+    private void writeDescription(JSONObject jsonRoot) {
+        var textFlow = new TextFlow();
+        textFlow.setPadding(new Insets(0, 0, 0, 120));
+        var description = new Text(jsonRoot.getString("description"));
+        description.setFont(new Font(23));
+        textFlow.getChildren().addAll(description);
+        layoutRoot.getChildren().add(textFlow);
+    }
 
-        for (int i = 0; i < stepsJson.length(); i++) { 
-            var text = makeText("Step " + Integer.toString(i + 1) + ": " + stepsJson.getString(i) + "\n");
-            stepsVBox.getChildren().add(text);
+    private static final int INPUT_HEIGHT = 50;
+
+    private Optional<ArrayList<Integer>> parseIntegerInput(String inputStr) {
+        try {
+            var intStrs = inputStr.split("\\D+");
+            var nums = new ArrayList<Integer>();
+            for (var intStr : intStrs) {
+                nums.add(Integer.parseInt(intStr));
+            }
+            return Optional.of(nums);
+        } catch (NumberFormatException e) {
+            return Optional.empty();
         }
-        layoutRoot.getChildren().add(stepsVBox);
+    }
+
+    private void reparseCurrNumInput(String inputStr) {
+        var nums = parseIntegerInput(inputStr);
+        currInput.clear(algorithmSection);
+        if (!nums.isEmpty()) {
+            currInput = new ListUI(algorithmSection, nums.get());
+            currInput.printXCoordinates();
+        }
     }
 
     private void makeListInput(HBox inputParamsBox) {
         //create input field
-        var listInput = new TextField("Enter a list of numbers separated by spaces");
-        setSize(listInput, 250, 30);
+        var listInput = new TextField();
+        listInput.setPromptText("Enter a list of numbers");
+
+        setSize(listInput, 350, INPUT_HEIGHT);
+        listInput.setFont(new Font(23));
+
+        listInput.textProperty().addListener((observable, oldValue, newValue) -> {
+            reparseCurrNumInput(newValue);
+        });
+
         inputParamsBox.getChildren().add(listInput);
-        paramValues.add(() -> { return listInput.getText(); });
     }
 
     private ComboBox<String> makeDropdown(JSONArray values) {
@@ -129,24 +153,27 @@ public class AlgorithmPage {
             dropdown.getItems().add(values.getString(i));
         }
         dropdown.setValue(values.getString(0));
+        setSize(dropdown, 115, INPUT_HEIGHT);
         paramValues.add(() -> { return dropdown.getValue(); });
         return dropdown;
     }
 
     private TextField makeNumberInput() {
         var input = new TextField();
-        
+
+        setSize(input, 75, INPUT_HEIGHT);
+
         //restrict input to only numbers
         input.textProperty().addListener((observable, oldValue, newValue) -> {
             input.setText(newValue.replaceAll("[^0-9]+", ""));
         });
+
         paramValues.add(() -> { return input.getText(); });
 
         return input;
     }
 
     private void makeAlgorithmParams(JSONObject jsonRoot, HBox inputParamsBox) {
-        System.out.println("Adding parameters...");
         var params = jsonRoot.getJSONArray("params");
         for (int i = 0; i < params.length(); i++) {
             var param = params.getJSONObject(i);
@@ -159,42 +186,67 @@ public class AlgorithmPage {
         }
     }
 
-    private void makeSubmitButton() {
-        var submitButton = new Button("Execute");
+    private void makeSubmitButton(HBox inputParamsBox) {
+        submitButton = new Button("Execute");
+        setSize(submitButton, 140, INPUT_HEIGHT);
         submitButton.setOnMouseClicked(event -> {
             var args = new ArrayList<String>();
             for (var input : paramValues) {
                 args.add(input.get());
             }
             
-            algorithmStepList = algorithmGenerator.generate(algorithmSection, args);
+            algorithmStepList = algorithmGenerator.generate(currInput, currInput.toIntegers(), args);
             
             submitButton.setDisable(true);
         });
-        layoutRoot.getChildren().add(centerNode(submitButton));
+        inputParamsBox.getChildren().add(submitButton);
     }
 
     private void makeAlgorithmForm(JSONObject jsonRoot) {
         var inputParamsBox = new HBox();
+        inputParamsBox.setPadding(new Insets(40, 0, 0, 120));
 
         makeListInput(inputParamsBox);
         makeAlgorithmParams(jsonRoot, inputParamsBox);
+        makeSubmitButton(inputParamsBox);
 
         layoutRoot.getChildren().add(inputParamsBox);
-        inputParamsBox.setAlignment(Pos.CENTER);
+    }
+
+    private void writeSteps(JSONObject jsonRoot) {
+        var stepsTitle = makeText(layoutRoot, "Steps");
+        stepsTitle.setUnderline(true);
+        layoutRoot.getChildren().add(centerNode(stepsTitle));
+        
+        JSONArray stepsJson = jsonRoot.getJSONArray("steps");
+        
+        var stepsVBox = new VBox();
+        stepsVBox.setPadding(new Insets(0, 0, 0, 120));
+
+        for (int i = 0; i < stepsJson.length(); i++) { 
+            var text = makeText(layoutRoot, "Step " + Integer.toString(i + 1) + ": " + stepsJson.getString(i) + "\n");
+            stepsVBox.getChildren().add(text);
+        }
+        layoutRoot.getChildren().add(stepsVBox);
     }
 
     AlgorithmPage(String jsonPath, AlgorithmGenerator algorithmGenerator, Stage stage, Scene homepage) {
+        System.out.println("Creating algorithm page!");
+
         layoutRoot = new VBox();
-        layoutRoot.setPadding(Insets.EMPTY);
+        //layoutRoot.setPadding(Insets.EMPTY);
 
         scene = new Scene(layoutRoot);
-        algorithmSection = new Group();
+
+        algorithmSection = new HBox(20);
+        algorithmSection.setAlignment(Pos.CENTER);
+
         algorithmStepList = new AlgorithmStepList();
 
         paramValues = new ArrayList<Supplier<String>>();
         this.algorithmGenerator = algorithmGenerator;
         
+        System.out.println("Created algorithm generator!");
         try {
             String fileStr = Files.readString(Paths.get(getPath(jsonPath))); 
             JSONObject jsonRoot = new JSONObject(fileStr);
@@ -204,11 +256,10 @@ public class AlgorithmPage {
             writeTitle(jsonRoot);
             writeDescription(jsonRoot);
             makeAlgorithmForm(jsonRoot);
-            makeSubmitButton();
             
             layoutRoot.getChildren().add(algorithmSection);
             
-            writeSteps(jsonRoot);
+            currInput = new ListUI();
 
             showAlgorithm();
         } catch (Exception e) { //FileIOException or JSONException
