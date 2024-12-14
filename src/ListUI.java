@@ -1,5 +1,7 @@
 package src;
 
+import java.awt.Color;
+import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList;
@@ -10,8 +12,11 @@ import javafx.scene.*;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.text.*;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.*;
 
-public class ListUI {
+public class ListUI{
     private static double FONT_SIZE = 80;
     private static double NUMBER_GAP = 28;
     
@@ -20,12 +25,16 @@ public class ListUI {
 
     public class TextInteger {
         public Text text;
+        // public Rectangle square;
         public Integer value;
         
         public TextInteger(int n) {
             value = n;
             text = new Text(Integer.toString(n));
             text.setFont(new Font(FONT_SIZE));
+            // square = new Rectangle();
+            // square.setWidth(text.getBoundsInLocal().getWidth());
+            // square.setHeight(text.getBoundsInLocal().getHeight());
         }
     }
 
@@ -59,6 +68,7 @@ public class ListUI {
 
     public void append(Integer num, Group group) {
         var textInt = new TextInteger(num);
+
         currInput.add(textInt);
 
         textInt.text.setX(getXCoordOfNum(currInput.size() - 1, textInt.text.getLayoutBounds().getWidth()));
@@ -71,7 +81,7 @@ public class ListUI {
         return Collections.unmodifiableList(currInput);
     }
 
-    private SequentialTransition moveUpAndOverToIndex(Text text, int idxDest) {
+    private SequentialTransition moveUpAndOverToIndex (Text text, int idxDest) {
         var moveUp = new TranslateTransition(Duration.millis(500), text);
         moveUp.setByY(-text.getBoundsInLocal().getHeight());
         
@@ -83,8 +93,19 @@ public class ListUI {
 
         var moveDown = new TranslateTransition(Duration.millis(500), text);
         moveDown.setByY(text.getBoundsInLocal().getHeight());
-        
         return new SequentialTransition(moveUp, moveHorizontally, moveDown);
+    }
+
+    private SequentialTransition incorrectToCorrectColors (Text text) {
+        FillTransition correcting = new FillTransition(Duration.millis(850), text, Color.RED, Color.GREEN); 
+        correcting.setCycleCount(1); 
+        correcting.setAutoReverse(false); 
+        
+        FillTransition corrected = new FillTransition(Duration.millis(850), text, Color.GREEN, Color.BLACK); 
+        corrected.setCycleCount(1); 
+        corrected.setAutoReverse(false);
+
+        return new SequentialTransition(correcting, corrected);
     }
 
     public ParallelTransition swap(int firstIdx, int secondIdx) {
@@ -102,8 +123,14 @@ public class ListUI {
         var firstTextTranslation  = moveUpAndOverToIndex(firstText, secondIdx);
         var secondTextTranslation = moveUpAndOverToIndex(secondText, firstIdx);
 
+        var firstTextColorChange = incorrectToCorrectColors(firstText);
+        var secondTextColorChange = incorrectToCorrectColors(secondText);
+
         //combine both animations to happen at once
         var parallelAnimation = new ParallelTransition(firstTextTranslation, secondTextTranslation);
+        
+        //combine both color changes so they happen at the same time
+        var parallelColor = new ParallelTransition(firstTextColorChange, secondTextColorChange); 
 
         //once the animation finishes, we reset the translate x values so nothing weird later happens later
         parallelAnimation.setOnFinished(event -> {
@@ -115,11 +142,44 @@ public class ListUI {
         });
         parallelAnimation.setCycleCount(1); // Ensure it runs only once
 
-        return parallelAnimation;
+        //combine actual swap with color changes to highlight the numbers that are being swapped
+        var parallelAnimationWithColor = new ParallelTransition(parallelAnimation, parallelColor);
+
+        // return parallelAnimation;
+        return parallelAnimationWithColor;
     }
 
     public void clear(Group group) {
         group.getChildren().clear();
         currInput.clear();
     }
+
+    //helps illustrate to the user what numbers are being looked at in the moment
+    
+    public FillTransition compare(int idx1, int idx2, Color oldColor, Color newColor){
+        FillTransition newColor = new FillTransition(Duration.millis(850), text, oldColor, newColor); 
+        newColor.setCycleCount(1); 
+        newColor.setAutoReverse(true); 
+        return newColor;
+    }
+
+    public ParallelTransition compare(int firstIdx, int secondIdx) {
+        //referencing the two texts that will be swapped 
+        var firstText = currInput.get(firstIdx).text;
+        var secondText = currInput.get(secondIdx).text;
+
+        //change their color from black to blue
+        FillTransition firstTextColorChange = new FillTransition(Duration.millis(500), firstText, Color.BLACK, Color.BLUE); 
+        firstTextColorChange.setCycleCount(1); 
+        firstTextColorChange.setAutoReverse(true);
+        FillTransition secondTextColorChange = new FillTransition(Duration.millis(850), secondText, Color.BLACK, Color.BLUE); 
+        secondTextColorChange.setCycleCount(1); 
+        secondTextColorChange.setAutoReverse(true);
+        
+        //combine both color changes so they happen at the same time
+        var parallelColor = new ParallelTransition(firstTextColorChange, secondTextColorChange); 
+        
+        return parallelColor;
+    }
+
 }

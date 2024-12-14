@@ -5,6 +5,9 @@ import java.util.Collections;
 
 import javafx.animation.SequentialTransition;
 import javafx.scene.Group;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+import javafx.scene.text.*;
 
 
 public class HeapSort {
@@ -26,9 +29,12 @@ public class HeapSort {
         for (int j = n - 1; j >= 0; j--){
             //move current root (max value) to the end of the list by swapping the 
             //root with the last node (last value on the list)
+            //COLOR CHANGE
             Collections.swap(integers, 0, j);
             final int rootValue = 0, lastValue = j;
             animations.addStep(() -> { return newTreeList.swap(rootValue, lastValue); }, null);
+            //change color from black to green of value once it is sorted
+            integers.get(j).text.setFill(Color.GREEN);
             //max heapify the shortened heap now that the root (max value) is in it's
             //correct location on the list and is "out of the way"
             heapify(integers, j, 0, animations, newTreeList);
@@ -36,31 +42,33 @@ public class HeapSort {
         animations.run();
     }
  
-    // To heapify a subtree rooted with node i which is
-    // an index in arr[]. n is size of heap
+    // To heapify a subtree
     private static void heapify(ArrayList<Integer> numbers, int n, int i, AlgorithmStepList animations, ListUI treeList) {
-        int largest = i; // Initialize largest as root
-        int l = 2 * i + 1; // left = 2*i + 1
-        int r = 2 * i + 2; // right = 2*i + 2
+        int largest = i; // largest is root/parent
+        int l = 2 * i + 1; // left
+        int r = 2 * i + 2; // right
  
         // If left child is larger than root
         if (l < n && numbers.get(l) > numbers.get(largest)){
+            //compare (turn values blue)
             largest = l;
         }
  
         // If right child is larger than largest so far
         if (r < n && numbers.get(r) > numbers.get(largest)){
+            //compare (turn values blue)
             largest = r;
         } 
  
         // If largest is not root
         if (largest != i) {
             //swap largest number with root to make max heap more accurate
+            //COLOR CHANGE
             Collections.swap(numbers, i, largest);
             final int rootValue = i, largerValue = largest;
             animations.addStep(() -> { return treeList.swap(rootValue, largerValue); }, null);
 
-            // Recursively heapify the affected sub-tree
+            // Recursively heapify the affected sub-tree 
             heapify(numbers, n, largest, animations, treeList);
         }
     }
