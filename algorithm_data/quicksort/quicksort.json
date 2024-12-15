@@ -1,6 +1,6 @@
 {
     "name": "Quicksort",
-    "description": "A divide and conquer algorithm that sorts a list by continuously partitioning it into increasingly sorted sub-halves. Is ingeneral the fastest sort algorithm",
+    "description": "A \"divide and conquer\" algorithm that sorts a list by continuously partitioning it into increasingly sorted sub-halves. Is in general the fastest sort algorithm.",
     "steps": [
         "If the list has only one element, short-circuit.",
         "Pick a number p to be the \"pivot\". Let pI = the index of the pivot",
