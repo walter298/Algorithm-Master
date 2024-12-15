@@ -22,7 +22,8 @@ public class ListUI {
     public class TextInteger {
         public Text text;
         public Integer value;
-        
+        public Color color = Color.BLACK;
+
         public TextInteger(int n) {
             value = n;
             text = new Text(Integer.toString(n));
@@ -32,8 +33,9 @@ public class ListUI {
 
     private volatile ArrayList<TextInteger> currInput;
     
-    public void setColor(int idx, Color color) {
-        currInput.get(idx).text.setFill(color);
+    public FillTransition setColor(int idx, Color color) {
+        var text = currInput.get(idx);
+        return new FillTransition(Duration.millis(100), text.text, text.color, color);
     }
 
     public ArrayList<Integer> toIntegers() {
@@ -60,14 +62,6 @@ public class ListUI {
 
     public List<TextInteger> getData() {
         return Collections.unmodifiableList(currInput);
-    }
-
-    private double getTrueX(Text text) {
-        return text.getLayoutX() + text.getTranslateX();
-    }
-
-    private boolean inBounds(int n) {
-        return n >= 0 && n < currInput.size();
     }
 
     //must be called after the numbers have been swapped
