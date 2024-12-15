@@ -1,7 +1,5 @@
 package src;
 
-import java.util.ArrayList;
-
 import javafx.application.*;
 import javafx.stage.*;
 

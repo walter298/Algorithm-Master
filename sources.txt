@@ -15,3 +15,4 @@ src/AlgorithmGenerator.java
 src/AlgorithmArgParser.java
 src/Homepage.java
 src/LayoutUtil.java
+src/VariableWatchWindow.java

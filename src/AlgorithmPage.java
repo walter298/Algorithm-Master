@@ -10,31 +10,23 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-import javax.xml.transform.Source;
-
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -49,6 +41,7 @@ public class AlgorithmPage {
     private ListUI currInput;
     private HBox algorithmSection;
     private Button submitButton;
+    private HBox watchWindowSection;
     private ArrayList<Supplier<String>> paramValues;
     private AlgorithmGenerator algorithmGenerator;
     private volatile AlgorithmStepList algorithmStepList;
@@ -56,8 +49,9 @@ public class AlgorithmPage {
     private void showAlgorithm() {
         var timeline = new Timeline(
             new KeyFrame(Duration.millis(50), event -> {
-                if (!algorithmStepList.isEmpty()) {
-                    algorithmStepList.run();
+                if (!algorithmStepList.isEmpty() && algorithmStepList.run()) {
+                    watchWindowSection.getChildren().clear();
+                    watchWindowSection.getChildren().add(algorithmStepList.getVariableWindow());
                 } else {
                     submitButton.setDisable(false);
                     scrollPane.setDisable(false);
@@ -258,14 +252,15 @@ public class AlgorithmPage {
     }
 
     AlgorithmPage(String algorithmName, AlgorithmGenerator algorithmGenerator, Stage stage, Scene homepage) throws Exception {
+        //initialize data members
         layoutRoot = new VBox();
         scrollPane = new ScrollPane(layoutRoot);
-
+        currInput = new ListUI();
         algorithmSection = new HBox(20); //20 is spacing between numbers
         algorithmSection.setAlignment(Pos.CENTER);
-
         algorithmStepList = new AlgorithmStepList();
-
+        watchWindowSection = new HBox();
+        watchWindowSection.setPadding(new Insets(0, 0, 0, 120));
         paramValues = new ArrayList<Supplier<String>>();
         this.algorithmGenerator = algorithmGenerator;
         
@@ -278,10 +273,9 @@ public class AlgorithmPage {
         writeDescription(jsonRoot);
         makeAlgorithmForm(jsonRoot);
         
-        layoutRoot.getChildren().add(algorithmSection);
-        scene = new Scene(scrollPane);
+        layoutRoot.getChildren().addAll(algorithmSection, watchWindowSection);
 
-        currInput = new ListUI();
+        scene = new Scene(scrollPane);
 
         showAlgorithm();
 

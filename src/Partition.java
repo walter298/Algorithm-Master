@@ -3,9 +3,10 @@ package src;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.function.Function;
+
+import javafx.scene.paint.Color;
 
 public class Partition {
     private static int findFirstNotMatch(ArrayList<Integer> integers, Function<Integer, Boolean> pred, int first, int last) {
@@ -29,11 +30,12 @@ public class Partition {
                 Collections.swap(integers, i, start);
                 final int iCopy = i, startCopy = start;
 
-                var varState = new HashMap<String, String>();
-                varState.put("K", Integer.toString(iCopy));
-                varState.put("I", Integer.toString(i));
+                var watchWindow = new VariableWatchWindow();
 
-                steps.addStep(() -> { return visualList.swap(iCopy, startCopy); }, varState);
+                watchWindow.add("start:", Integer.toString(startCopy), Color.GREEN);
+                watchWindow.add("it:", Integer.toString(iCopy), Color.BLUE);
+
+                steps.addStep(() -> { return visualList.swap(iCopy, startCopy); }, watchWindow);
 
                 start++;
             }
