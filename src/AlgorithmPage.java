@@ -50,8 +50,11 @@ public class AlgorithmPage {
         var timeline = new Timeline(
             new KeyFrame(Duration.millis(50), event -> {
                 if (!algorithmStepList.isEmpty() && algorithmStepList.run()) {
-                    watchWindowSection.getChildren().clear();
-                    watchWindowSection.getChildren().add(algorithmStepList.getVariableWindow());
+                    var newWatchWindow = algorithmStepList.getVariableWindow();
+                    if (newWatchWindow.isPresent()) {
+                        watchWindowSection.getChildren().clear();
+                        watchWindowSection.getChildren().add(newWatchWindow.get());
+                    }
                 } else {
                     submitButton.setDisable(false);
                     scrollPane.setDisable(false);

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 import java.util.function.Supplier;
 
@@ -14,11 +15,15 @@ import javafx.scene.layout.GridPane;
 public class AlgorithmStepList {
     public class AlgorithmStep {
         public Supplier<Animation> scheduledAnimation;
-        public VariableWatchWindow variableState;
+        public Optional<VariableWatchWindow> variableState;
         
         public AlgorithmStep(Supplier<Animation> scheduledAnimation, VariableWatchWindow variableState) {
             this.scheduledAnimation = scheduledAnimation;
-            this.variableState = variableState;
+            this.variableState = Optional.of(variableState);
+        }
+        public AlgorithmStep(Supplier<Animation> scheduledAnimation) {
+            this.scheduledAnimation = scheduledAnimation;
+            this.variableState = Optional.empty();
         }
     }
 
@@ -34,6 +39,10 @@ public class AlgorithmStepList {
         steps.add(new AlgorithmStep(scheduledAnimation, variableState));
     }
 
+    void addAnimation(Supplier<Animation> scheduledAnimation) {
+        steps.add(new AlgorithmStep(scheduledAnimation));
+    }
+
     boolean isEmpty() {
         return stepIdx >= steps.size();
     }
@@ -42,8 +51,11 @@ public class AlgorithmStepList {
         return stepIdx;
     }
 
-    GridPane getVariableWindow() {
-        return steps.get(stepIdx).variableState.makeWindow();
+    Optional<GridPane> getVariableWindow() {
+        if (steps.get(stepIdx).variableState.isEmpty()) {
+            return Optional.empty();
+        } 
+        return Optional.of(steps.get(stepIdx).variableState.get().makeWindow());
     }
 
     //returns true if a new step was just reached
