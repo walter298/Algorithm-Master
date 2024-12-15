@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javafx.scene.paint.Color;
+
 public class SelectionSort {
     public static AlgorithmStepList sort(ListUI visualList, ArrayList<Integer> integers, List<String> args) {
         var sortPred = AlgorithmArgParser.parseSortPred(args.get(0));
@@ -20,7 +22,12 @@ public class SelectionSort {
             if (min != i) {
                 Collections.swap(integers, i, min);
                 final int iCopy = i, minCopy = min;
-                steps.addStep(() -> { return visualList.swap(iCopy, minCopy); }, null);
+
+                var watchWindow = new VariableWatchWindow();
+                watchWindow.add("i", Integer.toString(i), Color.BLUE);
+                watchWindow.add("min", Integer.toString(min), Color.GREEN);
+
+                steps.addStep(() -> { return visualList.swap(iCopy, minCopy); }, watchWindow);
             }
         }
         

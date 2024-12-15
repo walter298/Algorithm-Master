@@ -40,9 +40,9 @@ public class Homepage {
         instruction.setFont(new Font("Arial", 18));
 
         var selectionSortButton = makeButton("Selection Sort", stage, new AlgorithmPage("selection_sort", SelectionSort::sort, stage, homepage));
-        var partitionButton = makeButton("Partition", stage, new AlgorithmPage("partition", Partition::partition, stage, homepage));
-        var quickSortButton = makeButton("Quicksort", stage, new AlgorithmPage("quicksort", QuickSort::sort, stage, homepage));
-        var nthElementButton = makeButton("Nth Element", stage, new AlgorithmPage("nth_element", NthElement::find, stage, homepage));
+        var partitionButton     = makeButton("Partition", stage, new AlgorithmPage("partition", Partition::partition, stage, homepage));
+        var quickSortButton     = makeButton("Quicksort", stage, new AlgorithmPage("quicksort", QuickSort::sort, stage, homepage));
+        var nthElementButton    = makeButton("Nth Element", stage, new AlgorithmPage("nth_element", NthElement::find, stage, homepage));
         
         layout.setAlignment(Pos.CENTER);
         

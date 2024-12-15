@@ -23,7 +23,7 @@ public class BubbleSort {
                 }
             }
         }        
-        animations.run();
+        //animations.run();
     }
 }
 
