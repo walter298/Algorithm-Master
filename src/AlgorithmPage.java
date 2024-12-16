@@ -241,11 +241,12 @@ public class AlgorithmPage {
         
         var textArea = new TextArea(numberedLines);
         textArea.setEditable(false);
+        textArea.setFont(new Font(20));
 
         //make text area have black background and white text
         textArea.setStyle("-fx-control-inner-background: black;");
         
-        LayoutUtil.setSize(textArea, 700, 700);
+        LayoutUtil.setSize(textArea, 900, 700);
         
         var hbox = new HBox();
         hbox.setPadding(new Insets(0, 0, 0, 120));

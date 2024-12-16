@@ -12,6 +12,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
@@ -23,11 +24,22 @@ public class ListUI {
         public Text text;
         public Integer value;
         public Color color = Color.BLACK;
-
+        //public Rectangle cell;
+        
         public TextInteger(int n) {
             value = n;
             text = new Text(Integer.toString(n));
             text.setFont(new Font(FONT_SIZE));
+            // cell = new Rectangle();
+            // cell.setWidth(text.getBoundsInLocal().getWidth());
+            // cell.setHeight(text.getBoundsInLocal().getHeight());
+            // cell.setLayoutX(text.getLayoutX());
+            // cell.setLayoutY(text.getLayoutY());
+            // cell.setStroke(Color.BLACK);
+            // cell.setFill(Color.WHITE);
+            // cell.setStrokeWidth(1);
+            // StackPane f = new StackPane();
+            // f.setLayoutX();
         }
     }
 
