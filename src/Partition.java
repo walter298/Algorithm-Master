@@ -32,19 +32,23 @@ public class Partition {
         // steps.addAnimation(() -> { return visualList.setColor(initialStart, PARTITION_POINT_COLOR); });
 
         for (int i = start + 1; i < last; i++) {
+            final var startF = start;
+            steps.addAnimation(() -> { return visualList.setColor(startF, PARTITION_POINT_COLOR); });
+
             if (pred.apply(integers.get(i))) {
+                //steps.addAnimation(() -> { return visualList.setColor(startF, Color.BLACK); });
+
                 Collections.swap(integers, i, start);
-                final int iCopy = i, startCopy = start;
+                final int iCopy = i;
 
                 var watchWindow = new VariableWatchWindow();
 
-                watchWindow.add("start:", Integer.toString(startCopy), Color.GREEN);
+                watchWindow.add("start:", Integer.toString(startF), Color.GREEN);
                 watchWindow.add("it:", Integer.toString(iCopy), Color.BLUE);
 
-                steps.addAnimation(() -> { return visualList.setColor(iCopy, Color.GREEN); });
-
-                steps.addStep(() -> { return visualList.swap(iCopy, startCopy); }, watchWindow);
-
+                steps.addStep(() -> { return visualList.swap(iCopy, startF); }, watchWindow);
+                //steps.addAnimation(() -> { return visualList.setColor(iCopy, Color.BLACK); });
+                
                 start++;
             }
         }

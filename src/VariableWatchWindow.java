@@ -2,7 +2,15 @@ package src;
 
 import java.util.TreeMap;
 
+import javafx.geometry.Insets;
 import javafx.scene.control.Label;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.BorderStrokeStyle;
+import javafx.scene.layout.BorderWidths;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -19,6 +27,10 @@ public class VariableWatchWindow {
     }
 
     private TreeMap<String, Value> varMap;
+
+    public static String iteratorString(int idx, int value) {
+        return "input[" + Integer.toString(idx) + "] | (" + Integer.toString(value) + ")";
+    }
 
     public VariableWatchWindow() {
         varMap = new TreeMap<>();
@@ -45,14 +57,23 @@ public class VariableWatchWindow {
             var nameLabel = makeLabel(entry.getKey());
             var valueLabel = makeLabel(entry.getValue().value);
             
-            //set labels to appropriate colors
+            //set variable name to appropriate color
             nameLabel.setTextFill(entry.getValue().color);
-            valueLabel.setTextFill(entry.getValue().color);
-
+            
             //add them to the grid
             grid.add(nameLabel, 0, rowC);
             grid.add(valueLabel, 1, rowC);
-            
+
+            grid.setBorder(new Border(new BorderStroke(
+                Color.BLACK, 
+                BorderStrokeStyle.SOLID, 
+                CornerRadii.EMPTY, 
+                new BorderWidths(2)
+            )));
+            grid.setBackground(new Background(
+                new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)
+            ));
+
             rowC++;
         }
 
