@@ -9,5 +9,6 @@
         {
             "type":"number_input"
         }
-    ]
+    ],
+    "step_intervals": []
 }

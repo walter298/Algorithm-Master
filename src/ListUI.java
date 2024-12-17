@@ -27,6 +27,9 @@ public class ListUI {
         //public Rectangle cell;
         
         public TextInteger(int n) {
+            Rectangle r = new Rectangle();
+            
+            Duration.millis(0);
             value = n;
             text = new Text(Integer.toString(n));
             text.setFont(new Font(FONT_SIZE));
