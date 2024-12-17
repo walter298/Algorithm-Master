@@ -35,7 +35,7 @@ public class ListUI {
     
     public FillTransition setColor(int idx, Color color) {
         var text = currInput.get(idx);
-        return new FillTransition(Duration.millis(100), text.text, text.color, color);
+        return new FillTransition(Duration.millis(300), text.text, text.color, color);
     }
 
     public ArrayList<Integer> toIntegers() {
