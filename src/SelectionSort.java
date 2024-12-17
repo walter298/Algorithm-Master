@@ -15,9 +15,19 @@ public class SelectionSort {
         for (int i = 0; i < integers.size(); i++) {
             int min = i; 
             for (int j = i + 1; j < integers.size(); j++) {
+                final var minF = min;
+                steps.addAnimation(() -> { return visualList.setColor(minF, Color.BLUE);});
+                final var jF = j;
+                steps.addAnimation(() -> { return visualList.setColor(jF, Color.BLUE);});
                 if (sortPred.comp(integers.get(j), integers.get(min))) {
                     min = j;
+                    final var minFinal = min;
+                    steps.addAnimation(() -> { return visualList.setColor(minFinal, Color.BLUE);});
                 }
+                final var minF = min;
+                steps.addAnimation(() -> { return visualList.setColor(minF, Color.BACK);});
+                final var jF = j;
+                steps.addAnimation(() -> { return visualList.setColor(jF, Color.BLACK);});
             }
             if (min != i) {
                 Collections.swap(integers, i, min);
