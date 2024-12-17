@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+import javax.xml.transform.Source;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.geometry.Insets;
@@ -223,37 +225,37 @@ public class AlgorithmPage {
         layoutRoot.getChildren().add(stepsVBox);
     }
 
-    private void viewSourceCode(VBox layoutRoot, String filePath) throws IOException {
-        var content = Files.readString(Paths.get(filePath));
-        var lines = content.split("\n");
-        var lineCountStr = Integer.toString(lines.length);
+    // private void viewSourceCode(VBox layoutRoot, String filePath) throws IOException {
+    //     var content = Files.readString(Paths.get(filePath));
+    //     var lines = content.split("\n");
+    //     var lineCountStr = Integer.toString(lines.length);
 
-        var numberedLines = new String();
+    //     var numberedLines = new String();
 
-        for (int i = 0; i < lines.length; i++) {
-            var idxStr = new StringBuilder(Integer.toString(i));
-            for (int j = 0; j < lineCountStr.length() - idxStr.length(); j++) {
-                idxStr.append(" ");
-            }
+    //     for (int i = 0; i < lines.length; i++) {
+    //         var idxStr = new StringBuilder(Integer.toString(i));
+    //         for (int j = 0; j < lineCountStr.length() - idxStr.length(); j++) {
+    //             idxStr.append(" ");
+    //         }
             
-            numberedLines = numberedLines + "\n" + idxStr.toString()  + "   " + lines[i];
-        }
+    //         numberedLines = numberedLines + "\n" + idxStr.toString()  + "   " + lines[i];
+    //     }
         
-        var textArea = new TextArea(numberedLines);
-        textArea.setEditable(false);
-        textArea.setFont(new Font(20));
+    //     var textArea = new TextArea(numberedLines);
+    //     textArea.setEditable(false);
+    //     textArea.setFont(new Font(20));
 
-        //make text area have black background and white text
-        textArea.setStyle("-fx-control-inner-background: black;");
+    //     //make text area have black background and white text
+    //     textArea.setStyle("-fx-control-inner-background: black;");
         
-        LayoutUtil.setSize(textArea, 900, 700);
+    //     LayoutUtil.setSize(textArea, 900, 700);
         
-        var hbox = new HBox();
-        hbox.setPadding(new Insets(0, 0, 0, 120));
-        hbox.getChildren().add(textArea);
+    //     var hbox = new HBox();
+    //     hbox.setPadding(new Insets(0, 0, 0, 120));
+    //     hbox.getChildren().add(textArea);
 
-        layoutRoot.getChildren().add(hbox);
-    }
+    //     layoutRoot.getChildren().add(hbox);
+    // }
 
     AlgorithmPage(String algorithmName, AlgorithmGenerator algorithmGenerator, Stage stage, Scene homepage) throws Exception {
         //initialize data members
@@ -283,7 +285,10 @@ public class AlgorithmPage {
 
         showAlgorithm();
 
-        viewSourceCode(layoutRoot, getAlgorithmDirectory(algorithmName) + "/" + algorithmName + ".hpp");
+        layoutRoot.getChildren().add(SourceCodeViewer.generate(
+            getAlgorithmDirectory(algorithmName) + "/" + algorithmName + ".hpp", 
+            jsonRoot.getJSONArray("step_intervals"))
+        );
     }
 
     public void run(Stage stage) {

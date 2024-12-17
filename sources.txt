@@ -16,3 +16,4 @@ src/AlgorithmArgParser.java
 src/Homepage.java
 src/LayoutUtil.java
 src/VariableWatchWindow.java
+src/SourceCodeViewer.java

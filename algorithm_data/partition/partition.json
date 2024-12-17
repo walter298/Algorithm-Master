@@ -14,5 +14,39 @@
         {
             "type":"number_input"
         }
+    ],
+    "step_intervals": [
+        { 
+            "start": 7,
+            "end": 8
+        },
+        {
+            "start": 10,
+            "end": 11
+        },
+        {
+            "start": 11,
+            "end": 12
+        },
+        {
+            "start": 14,
+            "end": 15
+        },
+        {
+            "start": 15,
+            "end": 16
+        },
+        {
+            "start": 16,
+            "end": 17
+        },
+        {
+            "start": 17,
+            "end": 18
+        },
+        {
+            "start": 20,
+            "end": 21
+        }
     ]
 }
