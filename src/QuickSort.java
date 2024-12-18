@@ -17,9 +17,9 @@ public class QuickSort {
         sortImpl(steps, visualList, integers, sortPred, mid2, last);
     }
 
-    public static AlgorithmStepList sort(ListUI visualList, ArrayList<Integer> integers, List<String> args) {
+    public static AlgorithmStepList sort(ListUI visualList, HighlightableCodeArea codeArea, ArrayList<Integer> integers, List<String> args) {
         var sortPred = AlgorithmArgParser.parseSortPred(args.get(0));
-        var steps = new AlgorithmStepList();
+        var steps = new AlgorithmStepList(codeArea);
         sortImpl(steps, visualList, integers, sortPred, 0, integers.size());
         return steps;
     }

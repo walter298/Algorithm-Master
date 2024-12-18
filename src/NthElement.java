@@ -6,8 +6,8 @@ import java.util.List;
 import javafx.scene.Group;
 
 public class NthElement {
-    public static AlgorithmStepList find(ListUI visualList, ArrayList<Integer> integers, List<String> args){
-        var steps = new AlgorithmStepList();
+    public static AlgorithmStepList find(ListUI visualList, HighlightableCodeArea codeArea, ArrayList<Integer> integers, List<String> args) {
+        var steps = new AlgorithmStepList(codeArea);
         
         int value = kthSmallest(steps, visualList, integers, 0, integers.size()-1, Integer.parseInt(args.get(0)));
         

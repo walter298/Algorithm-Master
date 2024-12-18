@@ -10,8 +10,6 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-import javax.xml.transform.Source;
-
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.geometry.Insets;
@@ -20,9 +18,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
@@ -43,23 +39,31 @@ public class AlgorithmPage {
     private ListUI currInput;
     private HBox algorithmSection;
     private Button submitButton;
+    private Button continueButton;
+    private boolean startedRunningAlgorithm = false;
     private HBox watchWindowSection;
     private ArrayList<Supplier<String>> paramValues;
+    private HighlightableCodeArea codeArea;
     private AlgorithmGenerator algorithmGenerator;
     private volatile AlgorithmStepList algorithmStepList;
 
     private void showAlgorithm() {
         var timeline = new Timeline(
             new KeyFrame(Duration.millis(50), event -> {
-                if (!algorithmStepList.isEmpty() && algorithmStepList.run()) {
+                if (algorithmStepList.isEmpty()) {
+                    submitButton.setDisable(false);
+                    continueButton.setDisable(true);
+                    scrollPane.setDisable(false); //todo: see if deleting this is okay
+                } else {
+                    algorithmStepList.run();
+                    if (algorithmStepList.hasHitBreakpoint()) {
+                        continueButton.setDisable(false);
+                    }
                     var newWatchWindow = algorithmStepList.getVariableWindow();
                     if (newWatchWindow.isPresent()) {
                         watchWindowSection.getChildren().clear();
                         watchWindowSection.getChildren().add(newWatchWindow.get());
                     }
-                } else {
-                    submitButton.setDisable(false);
-                    scrollPane.setDisable(false);
                 }
             })
         );
@@ -190,11 +194,26 @@ public class AlgorithmPage {
                 args.add(input.get());
             }
             
-            algorithmStepList = algorithmGenerator.generate(currInput, currInput.toIntegers(), args);
+            algorithmStepList = algorithmGenerator.generate(currInput, codeArea, currInput.toIntegers(), args);
             algorithmSection.requestFocus(); //prevent automatic scrolling down when numbers move up
             submitButton.setDisable(true);
+            continueButton.setDisable(false);
         });
         inputParamsBox.getChildren().add(submitButton);
+    }
+
+    private void makeContinueButton(HBox inputParamsBox) {
+        continueButton = new Button("Continue");
+        LayoutUtil.setSize(continueButton, 140, INPUT_HEIGHT);
+        
+        continueButton.setOnMouseClicked(event -> {
+            algorithmStepList.movePastBreakpoint();
+            continueButton.setDisable(true);
+            algorithmSection.requestFocus(); //prevent automatic scrolling down when numbers move up
+        });
+
+        continueButton.setDisable(true); //can only be enabled once an algorithm is running
+        inputParamsBox.getChildren().add(continueButton);
     }
 
     private void makeAlgorithmForm(JSONObject jsonRoot) {
@@ -204,58 +223,42 @@ public class AlgorithmPage {
         makeListInput(inputParamsBox);
         makeAlgorithmParams(jsonRoot, inputParamsBox);
         makeSubmitButton(inputParamsBox);
-
+        makeContinueButton(inputParamsBox);
         layoutRoot.getChildren().add(inputParamsBox);
     }
 
-    private void writeSteps(JSONObject jsonRoot) {
-        var stepsTitle = makeText(layoutRoot, "Steps");
-        stepsTitle.setUnderline(true);
-        layoutRoot.getChildren().add(LayoutUtil.centerNode(stepsTitle));
+    // private void writeSteps(JSONObject jsonRoot) {
+    //     var stepsTitle = makeText(layoutRoot, "Steps");
+    //     stepsTitle.setUnderline(true);
+    //     layoutRoot.getChildren().add(LayoutUtil.centerNode(stepsTitle));
         
-        JSONArray stepsJson = jsonRoot.getJSONArray("steps");
+    //     JSONArray stepsJson = jsonRoot.getJSONArray("steps");
         
-        var stepsVBox = new VBox();
-        stepsVBox.setPadding(new Insets(0, 0, 0, 120));
+    //     var stepsVBox = new VBox();
+    //     stepsVBox.setPadding(new Insets(0, 0, 0, 120));
 
-        for (int i = 0; i < stepsJson.length(); i++) { 
-            var text = makeText(layoutRoot, "Step " + Integer.toString(i + 1) + ": " + stepsJson.getString(i) + "\n");
-            stepsVBox.getChildren().add(text);
-        }
-        layoutRoot.getChildren().add(stepsVBox);
-    }
-
-    // private void viewSourceCode(VBox layoutRoot, String filePath) throws IOException {
-    //     var content = Files.readString(Paths.get(filePath));
-    //     var lines = content.split("\n");
-    //     var lineCountStr = Integer.toString(lines.length);
-
-    //     var numberedLines = new String();
-
-    //     for (int i = 0; i < lines.length; i++) {
-    //         var idxStr = new StringBuilder(Integer.toString(i));
-    //         for (int j = 0; j < lineCountStr.length() - idxStr.length(); j++) {
-    //             idxStr.append(" ");
-    //         }
-            
-    //         numberedLines = numberedLines + "\n" + idxStr.toString()  + "   " + lines[i];
+    //     for (int i = 0; i < stepsJson.length(); i++) { 
+    //         var text = makeText(layoutRoot, "Step " + Integer.toString(i + 1) + ": " + stepsJson.getString(i) + "\n");
+    //         stepsVBox.getChildren().add(text);
     //     }
-        
-    //     var textArea = new TextArea(numberedLines);
-    //     textArea.setEditable(false);
-    //     textArea.setFont(new Font(20));
-
-    //     //make text area have black background and white text
-    //     textArea.setStyle("-fx-control-inner-background: black;");
-        
-    //     LayoutUtil.setSize(textArea, 900, 700);
-        
-    //     var hbox = new HBox();
-    //     hbox.setPadding(new Insets(0, 0, 0, 120));
-    //     hbox.getChildren().add(textArea);
-
-    //     layoutRoot.getChildren().add(hbox);
+    //     layoutRoot.getChildren().add(stepsVBox);
     // }
+
+    private void initCodeAreaAndStepList(String algorithmName, JSONObject jsonRoot) throws Exception {
+        //create source code window
+        codeArea = new HighlightableCodeArea(
+            getAlgorithmDirectory(algorithmName) + "/" + algorithmName + ".hpp", 
+            jsonRoot.getJSONArray("step_intervals")
+        );
+        LayoutUtil.setSize(codeArea, 900, 700);
+        var areaLayout = new HBox(codeArea); 
+        
+        layoutRoot.getChildren().add(areaLayout);
+
+        algorithmStepList = new AlgorithmStepList(codeArea);
+
+        showAlgorithm();
+    }
 
     AlgorithmPage(String algorithmName, AlgorithmGenerator algorithmGenerator, Stage stage, Scene homepage) throws Exception {
         //initialize data members
@@ -264,7 +267,6 @@ public class AlgorithmPage {
         currInput = new ListUI();
         algorithmSection = new HBox(20); //20 is spacing between numbers
         algorithmSection.setAlignment(Pos.CENTER);
-        algorithmStepList = new AlgorithmStepList();
         watchWindowSection = new HBox();
         watchWindowSection.setPadding(new Insets(0, 0, 0, 120));
         paramValues = new ArrayList<Supplier<String>>();
@@ -278,17 +280,10 @@ public class AlgorithmPage {
         writeTitle(jsonRoot);
         writeDescription(jsonRoot);
         makeAlgorithmForm(jsonRoot);
-        
         layoutRoot.getChildren().addAll(algorithmSection, watchWindowSection);
+        initCodeAreaAndStepList(algorithmName, jsonRoot);
 
         scene = new Scene(scrollPane);
-
-        showAlgorithm();
-
-        layoutRoot.getChildren().add(SourceCodeViewer.generate(
-            getAlgorithmDirectory(algorithmName) + "/" + algorithmName + ".hpp", 
-            jsonRoot.getJSONArray("step_intervals"))
-        );
     }
 
     public void run(Stage stage) {
