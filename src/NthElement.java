@@ -37,11 +37,11 @@ public class NthElement {
                 return kthSmallest(steps, visualList, integers, pivotIndex + 1, high, k); // Search right
             }
         }
-        return -1; // This should never occur if k is valid
+        return -1; 
     }
 
     /**
-     * Partition function (similar to QuickSort). Elements less than the pivot
+     * Partition part. Elements less than the pivot
      * are moved to the left, and elements greater are moved to the right.
      */
     private static int partition(AlgorithmStepList steps, ListUI visualList, ArrayList<Integer> integers, int low, int high) {
