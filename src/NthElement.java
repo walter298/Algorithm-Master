@@ -3,48 +3,76 @@ package src;
 import java.util.ArrayList;
 import java.util.List;
 
-import javafx.scene.Group;
+import javafx.scene.paint.Color;
 
 public class NthElement {
-    public static AlgorithmStepList find(ListUI visualList, ArrayList<Integer> integers, List<String> args){
+
+    public static AlgorithmStepList find(ListUI visualList, ArrayList<Integer> integers, List<String> args) {
         var steps = new AlgorithmStepList();
-        
-        int value = kthSmallest(steps, visualList, integers, 0, integers.size()-1, Integer.parseInt(args.get(0)));
-        
-        //color or show the number we want to see
-        //????? --> create a way to highlight a specific number in a list
+
+        int k = Integer.parseInt(args.get(0)) - 1; // Convert to 0-indexed
+        int value = kthSmallest(steps, visualList, integers, 0, integers.size() - 1, k);
+
+        // Highlight the final Nth smallest element in the list
+        for (int i = 0; i < integers.size(); i++) {
+            int finalI = i;
+            if (integers.get(i) == value) {
+                steps.addAnimation(() -> visualList.setColor(finalI, Color.GREEN));
+            }
+        }
         return steps;
     }
 
-    // source of skeleton for code: https://www.geeksforgeeks.org/quickselect-algorithm/ 
-    
-    // can be used to find both kth largest and kth smallest element in the 
-    //array; assume all elements in arr[] are distinct
-    public static int kthSmallest(AlgorithmStepList steps, ListUI visualList, ArrayList<Integer> integers, int low, int high, int k)
-    {
-        // find the partition
-        var pivotIdx = low + ((high - low) / 2);
-        final int pivot = integers.get(pivotIdx);
-        var mid1 = Partition.partition(steps, visualList, integers, (i) -> { return i < pivot; }, low, high);
-        Partition.partition(steps, visualList, integers, (i) -> { return i.equals(pivot); }, mid1, high);
-
-        // if p is equal to the kth position, return the index of the value we desire to know
-        if (pivotIdx == k - 1){
-            return pivot;
+    /**
+     * Quickselect-based approach to find the k-th smallest element in the array.
+     */
+    private static int kthSmallest(AlgorithmStepList steps, ListUI visualList, ArrayList<Integer> integers, int low, int high, int k) {
+        if (low <= high) {
+            int pivotIndex = partition(steps, visualList, integers, low, high);
+            if (pivotIndex == k) {
+                return integers.get(pivotIndex); // Found the k-th smallest element
+            } else if (pivotIndex > k) {
+                return kthSmallest(steps, visualList, integers, low, pivotIndex - 1, k); // Search left
+            } else {
+                return kthSmallest(steps, visualList, integers, pivotIndex + 1, high, k); // Search right
+            }
         }
-
-        // if p is less than k, search right side of the array.
-        else if (pivotIdx < k - 1){
-            return kthSmallest(steps, visualList, integers, pivotIdx + 1, high, k);
-
-        }
-            
-        // if p is more than k, search left side
-        else{
-            return kthSmallest(steps, visualList, integers, low, pivotIdx - 1, k);
-        }
+        return -1; // This should never occur if k is valid
     }
 
+    /**
+     * Partition function (similar to QuickSort). Elements less than the pivot
+     * are moved to the left, and elements greater are moved to the right.
+     */
+    private static int partition(AlgorithmStepList steps, ListUI visualList, ArrayList<Integer> integers, int low, int high) {
+        int pivot = integers.get(high);
+        int i = low;
 
+        for (int j = low; j < high; j++) {
+            int finalJ = j;
+            int finalI = i;
 
+            // Highlight comparison
+            steps.addAnimation(() -> visualList.setColor(finalJ, Color.ORANGE));
+
+            if (integers.get(j) <= pivot) {
+                steps.addAnimation(() -> visualList.swap(finalI, finalJ));
+                swap(integers, i, j);
+                i++;
+            }
+        }
+
+        // Final swap to place pivot in its correct position
+        int finalI = i;
+        steps.addAnimation(() -> visualList.swap(finalI, high));
+        swap(integers, i, high);
+
+        return i; // Return the index of the pivot
+    }
+
+    private static void swap(ArrayList<Integer> list, int i, int j) {
+        int temp = list.get(i);
+        list.set(i, list.get(j));
+        list.set(j, temp);
+    }
 }
