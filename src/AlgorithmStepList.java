@@ -66,6 +66,10 @@ public class AlgorithmStepList {
         steps.add(new AlgorithmStep(scheduledAnimation, firstLine, secondLine));
     }
 
+    public void addAnimation(Supplier<Animation> scheduledAnimation) {
+        steps.add(new AlgorithmStep(scheduledAnimation, 1000000, 1000000));
+    }
+
     public void addBreakpoint(int firstLine, int secondLine) {
         steps.add(new AlgorithmStep(firstLine, secondLine));
     }

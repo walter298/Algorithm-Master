@@ -40,6 +40,7 @@ public class AlgorithmPage {
     private HBox algorithmSection;
     private Button submitButton;
     private Button continueButton;
+    private Button homeButton;
     private boolean startedRunningAlgorithm = false;
     private HBox watchWindowSection;
     private ArrayList<Supplier<String>> paramValues;
@@ -51,6 +52,7 @@ public class AlgorithmPage {
         var timeline = new Timeline(
             new KeyFrame(Duration.millis(50), event -> {
                 if (algorithmStepList.isEmpty()) {
+                    homeButton.setDisable(false);
                     submitButton.setDisable(false);
                     continueButton.setDisable(true);
                     scrollPane.setDisable(false); //todo: see if deleting this is okay
@@ -83,12 +85,12 @@ public class AlgorithmPage {
     }
 
     private Button makeBackButton(Stage stage, Scene homepage) {
-        var button = new Button("Home");
-        button.setOnMouseClicked(event -> {
+        homeButton = new Button("Home");
+        homeButton.setOnMouseClicked(event -> {
             currInput.clear(algorithmSection);
             stage.setScene(homepage);
         });
-        return button;
+        return homeButton;
     }
 
     private void writeTitle(JSONObject jsonRoot) {
@@ -197,6 +199,8 @@ public class AlgorithmPage {
             algorithmStepList = algorithmGenerator.generate(currInput, codeArea, currInput.toIntegers(), args);
             algorithmSection.requestFocus(); //prevent automatic scrolling down when numbers move up
             submitButton.setDisable(true);
+            homeButton.setDisable(true);
+            
             continueButton.setDisable(false);
         });
         inputParamsBox.getChildren().add(submitButton);
@@ -226,23 +230,6 @@ public class AlgorithmPage {
         makeContinueButton(inputParamsBox);
         layoutRoot.getChildren().add(inputParamsBox);
     }
-
-    // private void writeSteps(JSONObject jsonRoot) {
-    //     var stepsTitle = makeText(layoutRoot, "Steps");
-    //     stepsTitle.setUnderline(true);
-    //     layoutRoot.getChildren().add(LayoutUtil.centerNode(stepsTitle));
-        
-    //     JSONArray stepsJson = jsonRoot.getJSONArray("steps");
-        
-    //     var stepsVBox = new VBox();
-    //     stepsVBox.setPadding(new Insets(0, 0, 0, 120));
-
-    //     for (int i = 0; i < stepsJson.length(); i++) { 
-    //         var text = makeText(layoutRoot, "Step " + Integer.toString(i + 1) + ": " + stepsJson.getString(i) + "\n");
-    //         stepsVBox.getChildren().add(text);
-    //     }
-    //     layoutRoot.getChildren().add(stepsVBox);
-    // }
 
     private void initCodeAreaAndStepList(String algorithmName, JSONObject jsonRoot) throws Exception {
         //create source code window

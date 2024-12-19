@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
-import javafx.animation.ParallelTransition;
 import javafx.animation.SequentialTransition;
 import javafx.scene.paint.Color;
 
@@ -57,7 +56,7 @@ public class Partition {
                 visualList.setColor(startF, PARTITION_POINT_COLOR),
                 visualList.setColor(itF, IT_COLOR)
             );
-        }, 1000, 1000);   
+        });   
     }
 
     private static void incrementStartColor(AlgorithmStepList steps, ListUI visualList, ArrayList<Integer> integers, int start) {
@@ -85,12 +84,12 @@ public class Partition {
     private static void colorPartitionedRange(AlgorithmStepList steps, ListUI visualList, ArrayList<Integer> integers, int start) {
         final var startF = start;
         final var itF = integers.size() - 1;
-        steps.addAnimation(() -> { return visualList.setColor(startF, Color.BLACK); }, 10000, 10000);
-        steps.addAnimation(() -> { return visualList.setColor(itF, Color.BLACK); }, 10000, 10000);
+        steps.addAnimation(() -> { return visualList.setColor(startF, Color.BLACK); });
+        steps.addAnimation(() -> { return visualList.setColor(itF, Color.BLACK); });
         
         for (int i = 0; i < start; i++) {
             final var iF = i;
-            steps.addAnimation(() -> { return visualList.setColor(iF, Color.GREEN); }, 10000, 10000);
+            steps.addAnimation(() -> { return visualList.setColor(iF, Color.GREEN); });
         }
     }
 
