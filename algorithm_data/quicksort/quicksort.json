@@ -15,15 +15,11 @@
     ],
     "step_intervals": [
         {
-            "start": 6,
-            "end": 7
+            "start": 7,
+            "end": 8
         },
         {
             "start": 10,
-            "end": 11
-        },
-        {
-            "start": 11,
             "end": 12
         },
         {
