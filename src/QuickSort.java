@@ -13,10 +13,11 @@ public class QuickSort {
 
     //[first, last)
     private static void sortImpl(AlgorithmStepList steps, ListUI visualList, ArrayList<Integer> integers, AlgorithmArgParser.SortPred sortPred, int first, int last) {
-        for (int i = first; i < last; i++) {
-            final var iF = i;
-            steps.addAnimation(() -> { return visualList.setColor(iF, RANGE_COLOR); });
-        }
+        steps.addAnimation(() -> { 
+            final int firstF = first;
+            final int lastF = last;
+            return visualList.setColor(firstF, lastF, RANGE_COLOR); 
+        });
 
         var variableWindow = new VariableWatchWindow();
 
