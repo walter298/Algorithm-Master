@@ -9,7 +9,7 @@ namespace detail {
         }
     
         auto pivotIdx = std::distance(first, last) / 2;
-        auto pivot = *std::next(first, pivotIdx);
+        const auto& pivot = *std::next(first, pivotIdx);
 
         auto mid1 = std::partition(first, last, [&](const auto& em) {
             return em < pivot;
