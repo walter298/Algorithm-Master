@@ -19,6 +19,26 @@ public class Partition {
         return last;
     }
 
+    public static int partitionWithoutBreakpoints(AlgorithmStepList steps, ListUI visualList, ArrayList<Integer> integers, Function<Integer, Boolean> pred, int first, int last) {
+        var start = findFirstNotMatch(integers, pred, first, last);
+
+        if (start == integers.size()) {
+            return start;
+        }
+
+        for (int i = start + 1; i < last; i++) {
+            if (pred.apply(integers.get(i))) {
+                Collections.swap(integers, i, start);
+                final var iF = i;
+                final var startF = start;
+                steps.addAnimation(() -> { return visualList.swap(iF, startF); });
+                start++;
+            }
+        }
+
+        return start;
+    }
+
     private static final Color PARTITION_POINT_COLOR = Color.GREEN;
     private static final Color IT_COLOR = Color.BLUE;
 

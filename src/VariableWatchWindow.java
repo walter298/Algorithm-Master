@@ -1,5 +1,6 @@
 package src;
 
+import java.util.ArrayList;
 import java.util.TreeMap;
 
 import javafx.geometry.Insets;
@@ -32,8 +33,21 @@ public class VariableWatchWindow {
         return "input[" + Integer.toString(idx) + "] | (" + Integer.toString(value) + ")";
     }
 
+    public static String iteratorString(int idx, ArrayList<Integer> values) {
+        if (idx < values.size()) {
+            return iteratorString(idx, values.get(idx));
+        } else {
+            return "input[" + Integer.toString(idx) + "] | (end)";
+        }
+    }
+
     public VariableWatchWindow() {
         varMap = new TreeMap<>();
+    }
+
+    //ctor
+    public VariableWatchWindow(VariableWatchWindow other) {
+        varMap = new TreeMap<>(other.varMap);
     }
 
     public void add(String name, String value, Color color) {
