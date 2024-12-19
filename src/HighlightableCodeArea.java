@@ -84,7 +84,8 @@ public class HighlightableCodeArea extends InlineCssTextArea {
     private HashMap<Interval, Selection<String, String, String>> currPermanentHighlights;
     private Selection<String, String, String> currTempHighlight;
     private Selection<String, String, String> specifiedSelection;
-    
+    private boolean clickedOnSpecifiedSelection = false;
+
     private void generatePossiblePermanentHighlights() {
         for (var lineBounds : highlightableLineBounds) {
             var begin = lineBeginIndices.get(lineBounds.first);
@@ -107,7 +108,7 @@ public class HighlightableCodeArea extends InlineCssTextArea {
     }
 
     private void setupReactiveTemporaryHighlighting() {
-        setMouseOverTextDelay(Duration.ofMillis(1));
+        setMouseOverTextDelay(Duration.ofMillis(1)); //if you don't call this function, there is infinite delay
         
         addEventHandler(MouseOverTextEvent.MOUSE_OVER_TEXT_BEGIN, event -> {
             var charIdx = event.getCharacterIndex();
@@ -143,8 +144,11 @@ public class HighlightableCodeArea extends InlineCssTextArea {
             
             var permanentHighlight = currPermanentHighlights.get(interval);
 
-            //if we are clicking on something that is already selected, deselect it
-            if (permanentHighlight.getRange().equals(currTempHighlightRange)) {
+            if (specifiedSelection.getRange().equals(currTempHighlightRange)) {
+                clickedOnSpecifiedSelection = true;
+                specifiedSelection.deselect();
+                permanentHighlight.deselect();
+            } else if (permanentHighlight.getRange().equals(currTempHighlightRange)) {
                 permanentHighlight.deselect();
             } else {
                 currTempHighlight.deselect();
@@ -235,6 +239,11 @@ public class HighlightableCodeArea extends InlineCssTextArea {
     }
 
     public void deoverlayOverPermanentHighlight() {
+        if (clickedOnSpecifiedSelection) {
+            clickedOnSpecifiedSelection = false;
+            return; 
+        }
+
         int charBegin = specifiedSelection.getRange().getStart();
         int charEnd = specifiedSelection.getRange().getEnd();
         specifiedSelection.deselect();

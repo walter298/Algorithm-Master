@@ -82,6 +82,18 @@ public class Partition {
         }
     }
 
+    private static void colorPartitionedRange(AlgorithmStepList steps, ListUI visualList, ArrayList<Integer> integers, int start) {
+        final var startF = start;
+        final var itF = integers.size() - 1;
+        steps.addAnimation(() -> { return visualList.setColor(startF, Color.BLACK); }, 10000, 10000);
+        steps.addAnimation(() -> { return visualList.setColor(itF, Color.BLACK); }, 10000, 10000);
+        
+        for (int i = 0; i < start; i++) {
+            final var iF = i;
+            steps.addAnimation(() -> { return visualList.setColor(iF, Color.GREEN); }, 10000, 10000);
+        }
+    }
+
     public static int partition(AlgorithmStepList steps, ListUI visualList, ArrayList<Integer> integers, Function<Integer, Boolean> pred, int first, int last) {
         var start = findFirstNotMatch(integers, pred, first, last);
 
@@ -109,6 +121,8 @@ public class Partition {
                 updateStartAndIt(steps, visualList, integers, start, i, 17, 18);
             }
         }
+
+        colorPartitionedRange(steps, visualList, integers, start);
 
         return start;
     }
