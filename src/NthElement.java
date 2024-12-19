@@ -3,77 +3,64 @@ package src;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.animation.ParallelTransition;
 import javafx.scene.paint.Color;
 
 public class NthElement {
+    private static final Color RANGE_COLOR = Color.BLUE;
+    private static final Color PIVOT_COLOR = Color.PINK;
+    private static final Color FOUND_PIVOT_COLOR = Color.GREEN;
+    private static final Color PARTITION_POINT_COLOR = Color.ORANGE;
 
     public static AlgorithmStepList find(ListUI visualList, HighlightableCodeArea codeArea, ArrayList<Integer> integers, List<String> args) {
         var steps = new AlgorithmStepList(codeArea);
 
-        int k = Integer.parseInt(args.get(0)) - 1; // Convert to 0-indexed
-        int value = kthSmallest(steps, visualList, integers, 0, integers.size() - 1, k);
+        int k = Integer.parseInt(args.get(0));
+        final int pivotIdx = findImpl(steps, visualList, integers, 0, integers.size(), k);
+        steps.addAnimation(() -> { return visualList.setColor(pivotIdx, FOUND_PIVOT_COLOR); });
 
-        // Highlight the final Nth smallest element in the list
-        for (int i = 0; i < integers.size(); i++) {
-            int finalI = i;
-            if (integers.get(i) == value) {
-                steps.addAnimation(() -> visualList.setColor(finalI, Color.GREEN));
-            }
-        }
         return steps;
     }
 
-    /**
-     * Quickselect-based approach to find the k-th smallest element in the array.
-     */
-    private static int kthSmallest(AlgorithmStepList steps, ListUI visualList, ArrayList<Integer> integers, int low, int high, int k) {
-        if (low <= high) {
-            int pivot = integers.get(low);
-            int pivotIndex = Partition.partitionWithoutBreakpoints(steps, visualList, integers, {i} -> { return i < pivot; }, low, high);
-            if (pivotIndex == k) {
-                return integers.get(pivotIndex); // Found the k-th smallest element
-            } else if (pivotIndex > k) {
-                return kthSmallest(steps, visualList, integers, low, pivotIndex - 1, k); // Search left
-            } else {
-                return kthSmallest(steps, visualList, integers, pivotIndex + 1, high, k); // Search right
-            }
+    private static int findImpl(AlgorithmStepList steps, ListUI visualList, ArrayList<Integer> integers, int first, int last, int k) {
+        final int firstF = first;
+        final int lastF = last;
+
+        steps.addAnimation(() -> { 
+            return visualList.setColor(firstF, lastF, RANGE_COLOR); 
+        });
+
+        var variableWindow = new VariableWatchWindow();
+
+        variableWindow.add("begin", Integer.toString(firstF), RANGE_COLOR);
+        variableWindow.add("end", Integer.toString(lastF), RANGE_COLOR);
+        
+        final var pivotIdx = first + ((last - first) / 2);
+        final var pivot = integers.get(pivotIdx);
+
+        variableWindow.add("pivot", VariableWatchWindow.iteratorString(pivotIdx, pivot), PIVOT_COLOR);
+        steps.addStep(() -> { return visualList.setColor(pivotIdx, PIVOT_COLOR); }, new VariableWatchWindow(variableWindow), 10, 12);
+
+        final var mid1 = Partition.partitionWithoutBreakpoints(steps, visualList, integers, (i) -> { return i < pivot; }, first, last);
+
+        variableWindow.add("mid1", VariableWatchWindow.iteratorString(mid1, integers), PARTITION_POINT_COLOR);
+        steps.addStep(new VariableWatchWindow(variableWindow), 8, 11);
+
+        final var mid2 = Partition.partitionWithoutBreakpoints(steps, visualList, integers, (i) -> { return i == pivot; }, mid1, last);
+        
+        variableWindow.add("mid2", VariableWatchWindow.iteratorString(mid2, integers), PARTITION_POINT_COLOR);
+        steps.addStep(new VariableWatchWindow(variableWindow), 11, 14);
+        
+        steps.addAnimation(() -> {
+            return visualList.setColor(firstF, lastF, Color.BLACK);
+        });
+
+        if (mid1 == k) {
+            return mid1;
+        } else if (mid1 < k) {
+            return findImpl(steps, visualList, integers, mid1 + 1, lastF, k); 
+        } else {
+            return findImpl(steps, visualList, integers, firstF, mid1, k); 
         }
-        return -1; 
-    }
-
-    /**
-     * Partition part. Elements less than the pivot
-     * are moved to the left, and elements greater are moved to the right.
-     */
-    private static int partition(AlgorithmStepList steps, ListUI visualList, ArrayList<Integer> integers, int low, int high) {
-        int pivot = integers.get(high);
-        int i = low;
-
-        for (int j = low; j < high; j++) {
-            int finalJ = j;
-            int finalI = i;
-
-            // Highlight comparison
-            steps.addAnimation(() -> visualList.setColor(finalJ, Color.ORANGE));
-
-            if (integers.get(j) <= pivot) {
-                steps.addAnimation(() -> visualList.swap(finalI, finalJ));
-                swap(integers, i, j);
-                i++;
-            }
-        }
-
-        // Final swap to place pivot in its correct position
-        int finalI = i;
-        steps.addAnimation(() -> visualList.swap(finalI, high));
-        swap(integers, i, high);
-
-        return i; // Return the index of the pivot
-    }
-
-    private static void swap(ArrayList<Integer> list, int i, int j) {
-        int temp = list.get(i);
-        list.set(i, list.get(j));
-        list.set(j, temp);
     }
 }

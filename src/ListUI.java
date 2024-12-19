@@ -53,6 +53,14 @@ public class ListUI {
         return new FillTransition(Duration.millis(100), text.text, text.color, color);
     }
 
+    public SequentialTransition setColor(int begin, int end, Color color) {
+        var transition = new SequentialTransition();
+        for (int i = begin; i < end; i++) {
+            transition.getChildren().add(setColor(i, color));
+        }
+        return transition;
+    }
+
     public ArrayList<Integer> toIntegers() {
         var nums = new ArrayList<Integer>();
         for (var text : currInput) {
