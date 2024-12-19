@@ -116,21 +116,6 @@ public class AlgorithmStepList {
         }
         
         var currStep = steps.get(stepIdx);
-        
-        //if the current step has a breakpoint, then pause until the user manually continues past it
-        // if (hasHitbreakPoint && !isContinuedPastBreakpoint) {
-        //     return false;
-        // } 
-        // if (!hasHitbreakPoint && sourceCodeViewer.hasBreakpoint(currStep.firstLine, currStep.secondLine)) {
-        //     hasHitbreakPoint = true;
-        //     return false;
-        // }
-
-        //if there is no animation nor breakpoint, move to the next step
-        // if (currStep.scheduledAnimation.isEmpty()) {
-        //     moveToNextStep();
-        //     return true;
-        // } 
 
         if (currStep.scheduledAnimation.isPresent()) {
             //if we have not even started the animation yet, start it!
@@ -160,14 +145,5 @@ public class AlgorithmStepList {
         moveToNextStep();
 
         return true;
-    }
-
-    void togglePause() {
-        var status = currentlyRunningAnimation.getStatus();
-        if (status == Status.PAUSED) {
-            currentlyRunningAnimation.play();
-        } else if (status == Status.PAUSED) {
-            currentlyRunningAnimation.pause();
-        }
     }
 }
