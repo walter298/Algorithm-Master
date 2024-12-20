@@ -150,6 +150,7 @@ public class HighlightableCodeArea extends InlineCssTextArea {
                 permanentHighlight.deselect();
             } else if (permanentHighlight.getRange().equals(currTempHighlightRange)) {
                 permanentHighlight.deselect();
+                currTempHighlight.deselect(); //change
             } else {
                 currTempHighlight.deselect();
                 permanentHighlight.selectRange(start, end);
@@ -175,7 +176,7 @@ public class HighlightableCodeArea extends InlineCssTextArea {
         specifiedSelection = new SelectionImpl<>("specified_selection", this,
             path -> {
                 path.setStrokeWidth(0);
-                path.setFill(Color.PURPLE);
+                path.setFill(Color.PINK);
             }
         );
         
@@ -258,5 +259,7 @@ public class HighlightableCodeArea extends InlineCssTextArea {
         }
         var permanentHighlight = currPermanentHighlights.get(new Interval(charBegin, charEnd));
         permanentHighlight.selectRange(charBegin, charEnd);
+
+        currTempHighlight.deselect();
     }
 }
