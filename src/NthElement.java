@@ -39,7 +39,7 @@ public class NthElement {
         final var pivot = integers.get(pivotIdx);
 
         variableWindow.add("pivot", VariableWatchWindow.iteratorString(pivotIdx, pivot), PIVOT_COLOR);
-        steps.addStep(() -> { return visualList.setColor(pivotIdx, PIVOT_COLOR); }, new VariableWatchWindow(variableWindow), 10, 12);
+        steps.addStep(() -> { return visualList.setColor(pivotIdx, PIVOT_COLOR); }, new VariableWatchWindow(variableWindow), 6, 7);
 
         final var mid1 = Partition.partitionWithoutBreakpoints(steps, visualList, integers, (i) -> { return i < pivot; }, first, last);
 

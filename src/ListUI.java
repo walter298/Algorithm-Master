@@ -33,16 +33,6 @@ public class ListUI {
             value = n;
             text = new Text(Integer.toString(n));
             text.setFont(new Font(FONT_SIZE));
-            // cell = new Rectangle();
-            // cell.setWidth(text.getBoundsInLocal().getWidth());
-            // cell.setHeight(text.getBoundsInLocal().getHeight());
-            // cell.setLayoutX(text.getLayoutX());
-            // cell.setLayoutY(text.getLayoutY());
-            // cell.setStroke(Color.BLACK);
-            // cell.setFill(Color.WHITE);
-            // cell.setStrokeWidth(1);
-            // StackPane f = new StackPane();
-            // f.setLayoutX();
         }
     }
 
