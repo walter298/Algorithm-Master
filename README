@@ -1,0 +1,7 @@
+Algorithm-master using maven
+
+Download maven and put in PATH (verify with mvn verify)
+mvn:generate to generate a POM
+add appropriate jfx maven entries
+mvn clean dependency:copy-dependencies package
+java -cp target/classes --module-path target/dependency --add-modules javafx.controls,org.fxmisc.richtext edu.carleton.algorithm.Main
